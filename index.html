@@ -1,368 +1,480 @@
-import React, { useState, useEffect } from 'react';
-import { Volume2, Shuffle, List, Layout, ChevronRight, ChevronLeft, RotateCcw, Eye, EyeOff } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Masa Crítica - Repaso</title>
+    <!-- Tailwind CSS para el diseño exacto -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos Lucide (los mismos de la primera versión) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Mejoras para móvil */
+        body { -webkit-tap-highlight-color: transparent; }
+        .no-select { user-select: none; -webkit-user-select: none; }
+        .touch-action-manipulation { touch-action: manipulation; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col h-screen overflow-hidden">
 
-const rawData = [
-  { id: 1, es: "Es un teléfono.", en: "It's a telephone." },
-  { id: 2, es: "Estoy aquí.", en: "I'm here." },
-  { id: 3, es: "La casa es grande.", en: "The house is big." },
-  { id: 4, es: "¿Dónde está?", en: "Where is it?" },
-  { id: 5, es: "¿Quién eres?", en: "Who are you?" },
-  { id: 6, es: "¿De dónde eres?", en: "Where are you from?" },
-  { id: 7, es: "El libro rojo está en la mesa.", en: "The red book is on the table." },
-  { id: 8, es: "¿Está el libro en tu bolsillo?", en: "Is the book in your pocket?" },
-  { id: 9, es: "Aquél no es tu coche.", en: "That isn't your car." },
-  { id: 10, es: "Mis hijos están en el colegio.", en: "My children are at school." },
-  { id: 11, es: "Él no habla tanto como tú.", en: "He doesn't talk as much as you do." },
-  { id: 12, es: "¿Por qué no dices algo?", en: "Why don't you say something?" },
-  { id: 13, es: "Fumas demasiados puros.", en: "You smoke too many cigars." },
-  { id: 14, es: "No fumo tantos como él.", en: "I don't smoke as many as he does." },
-  { id: 15, es: "¿No te fías de mí?", en: "Don't you trust me?" },
-  { id: 16, es: "¿Trabajas demasiado?", en: "Do you work too much?" },
-  { id: 17, es: "Casi nunca como pan.", en: "I hardly ever eat bread." },
-  { id: 18, es: "¿A qué hora sale el avión?", en: "What time does the plane leave?" },
-  { id: 19, es: "Da igual.", en: "It doesn't matter." },
-  { id: 20, es: "Me duele el hombro.", en: "My shoulder hurts." },
-  { id: 21, es: "¿Qué le dijo el lobo cuando la vio?", en: "What did the wolf say to her when he saw her?" },
-  { id: 22, es: "Ella le dijo que iba a casa.", en: "She told him she was going home." },
-  { id: 23, es: "¿La comió el lobo al final?", en: "Did the wolf eat her at the end?" },
-  { id: 24, es: "El cazador lo mató.", en: "The hunter killed him." },
-  { id: 25, es: "¿Qué hacías cuando ocurrió?", en: "What were you doing when it happened?" },
-  { id: 26, es: "No fue culpa mía.", en: "It wasn't my fault." },
-  { id: 27, es: "Hubo algunos problemas al principio.", en: "There were some problems at the beginning." },
-  { id: 28, es: "¿Cuándo lo oíste?", en: "When did you hear it?" },
-  { id: 29, es: "Me costó mucho.", en: "It cost me a lot." },
-  { id: 30, es: "¿Quién trajo el dinero?", en: "Who brought the money?" },
-  { id: 31, es: "Lo haré cuando pueda.", en: "I'll do it when I can." },
-  { id: 32, es: "Le veré en cuanto pueda.", en: "I'll see him as soon as I can." },
-  { id: 33, es: "¿Cuándo estarán aquí?", en: "When will they be here?" },
-  { id: 34, es: "Vendrán cuando yo les llame.", en: "They'll come when I call them." },
-  { id: 35, es: "Voy a decirte algo que no te va a gustar.", en: "I'm going to tell you something you're not going to like." },
-  { id: 36, es: "¿Qué pasará si alguien se entera?", en: "What will happen if someone finds out?" },
-  { id: 37, es: "Si apruebas el examen, aprobarás el curso.", en: "If you pass the exam, you'll pass the course." },
-  { id: 38, es: "Habrá una investigación.", en: "There will be an investigation." },
-  { id: 39, es: "Te llamaremos en cuanto lo recibamos.", en: "We'll call you as soon as we receive it." },
-  { id: 40, es: "¿Qué vas a hacer?", en: "What are you going to do?" },
-  { id: 41, es: "Quiero que vayas con él.", en: "I want you to go with him." },
-  { id: 42, es: "No quiero que él sepa nada.", en: "I don't want him to know anything." },
-  { id: 43, es: "Me dijeron que le buscara.", en: "They told me to look for him." },
-  { id: 44, es: "Te dije que no tocaras nada.", en: "I told you not to touch anything." },
-  { id: 45, es: "¿Quién te dijo que me llamaras?", en: "Who told you to call me?" },
-  { id: 46, es: "Quiero que me mires.", en: "I want you to look at me." },
-  { id: 47, es: "Diles que tengan cuidado.", en: "Tell them to be careful." },
-  { id: 48, es: "¿Qué quieres que yo haga?", en: "What do you want me to do?" },
-  { id: 49, es: "¿A dónde quieres que te lleve?", en: "Where do you want me to take you?" },
-  { id: 50, es: "Pídeles que no fumen.", en: "Ask them not to smoke." },
-  { id: 51, es: "Tengo que irme.", en: "I have to go." },
-  { id: 52, es: "No tienes que hacer eso.", en: "You don't have to do that." },
-  { id: 53, es: "Deben ser malos.", en: "They must be bad." },
-  { id: 54, es: "Debe de haber un error.", en: "There must be a mistake." },
-  { id: 55, es: "¿Se puede entrar?", en: "May I come in?" },
-  { id: 56, es: "No puedo evitarlo.", en: "I can't help it." },
-  { id: 57, es: "Deberías tener más cuidado.", en: "You should be more careful." },
-  { id: 58, es: "¿Puedes hablar un poco más alto?", en: "Can you speak a little louder?" },
-  { id: 59, es: "Tienes que hacerlo de esta forma.", en: "You have to do it this way." },
-  { id: 60, es: "Querer es poder.", en: "Where there's a will, there's a way." },
-  { id: 61, es: "Depende de ti.", en: "It depends on you." },
-  { id: 62, es: "Estoy buscando mis llaves.", en: "I'm looking for my keys." },
-  { id: 63, es: "Se me olvidó el paraguas.", en: "I forgot my umbrella." },
-  { id: 64, es: "¿En qué basas tu opinión?", en: "What do you base your opinion on?" },
-  { id: 65, es: "Tíralo.", en: "Throw it away." },
-  { id: 66, es: "Póntelo.", en: "Put it on." },
-  { id: 67, es: "Quítatelo.", en: "Take it off." },
-  { id: 68, es: "Se acabó la fiesta.", en: "The party is over." },
-  { id: 69, es: "Me levanté pronto.", en: "I got up early." },
-  { id: 70, es: "Sigue intentando.", en: "Keep trying." },
-  { id: 71, es: "En realidad, no lo sé.", en: "Actually, I don't know." },
-  { id: 72, es: "¿Puedo asistir a la reunión?", en: "Can I attend the meeting?" },
-  { id: 73, es: "Estoy constipado.", en: "I have a cold." },
-  { id: 74, es: "Me siento avergonzada.", en: "I feel embarrassed." },
-  { id: 75, es: "Es una persona muy sensible.", en: "She is a very sensitive person." },
-  { id: 76, es: "Es una persona muy sensata.", en: "She is a very sensible person." },
-  { id: 77, es: "La historia fue interesante.", en: "The story was interesting." },
-  { id: 78, es: "Estoy de acuerdo.", en: "I agree." },
-  { id: 79, es: "La gente es rica.", en: "People are rich." },
-  { id: 80, es: "Llevo dos años aquí.", en: "I have been here for two years." },
-  { id: 81, es: "Sigue intentando.", en: "Keep trying." },
-  { id: 82, es: "Mantén los ojos abiertos.", en: "Keep your eyes open." },
-  { id: 83, es: "No te rías de mí.", en: "Don't laugh at me." },
-  { id: 84, es: "Deja de llorar.", en: "Stop crying." },
-  { id: 85, es: "Pruébalo antes de decidir.", en: "Try it before deciding." },
-  { id: 86, es: "Estás engordando.", en: "You're getting fat." },
-  { id: 87, es: "Soy un fracasado.", en: "I'm a failure." },
-  { id: 88, es: "¿Te importa que yo fume?", en: "Do you mind if I smoke?" },
-  { id: 89, es: "No me gusta tirar las cosas.", en: "I don't like to throw things away." },
-  { id: 90, es: "Eres un hombre afortunado.", en: "You're a lucky man." },
-  { id: 91, es: "¿A quién llamaste?", en: "Who did you call?" },
-  { id: 92, es: "¿Quién te llamó?", en: "Who called you?" },
-  { id: 93, es: "Nadie me dijo nada.", en: "Nobody told me anything." },
-  { id: 94, es: "¿Por qué no me llaman?", en: "Why don't they call me?" },
-  { id: 95, es: "Se lo agradecí.", en: "I thanked him for it." },
-  { id: 96, es: "¿Puedo pedirte un favor?", en: "Can I ask you a favor?" },
-  { id: 97, es: "No me importa en absoluto.", en: "I don't mind at all." },
-  { id: 98, es: "Tendrás que demostrar tu valía.", en: "You'll have to prove your worth." },
-  { id: 99, es: "¿Se puede?", en: "Is it possible?" },
-  { id: 100, es: "No es obligatorio.", en: "It's not obligatory." },
-  { id: 101, es: "Había una mujer aquí ayer.", en: "There was a woman here yesterday." },
-  { id: 102, es: "Llovía cuando salimos.", en: "It was raining when we left." },
-  { id: 103, es: "Estaré aquí toda la tarde.", en: "I'll be here all afternoon." },
-  { id: 104, es: "Me vestí después del desayuno.", en: "I got dressed after breakfast. " },
-  { id: 105, es: "¿Cuándo estará listo?", en: "When will it be ready?" }
-];
-
-export default function App() {
-  const [mode, setMode] = useState('card'); // 'card' or 'list'
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [order, setOrder] = useState([...Array(rawData.length).keys()]); // Array of indices 0..104
-  const [isShuffled, setIsShuffled] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const activeIndex = order[currentIndex];
-  const currentPhrase = rawData[activeIndex];
-
-  const toggleShuffle = () => {
-    if (isShuffled) {
-      // Reset to sequential
-      setOrder([...Array(rawData.length).keys()]);
-      setIsShuffled(false);
-      setCurrentIndex(0);
-    } else {
-      // Shuffle
-      const newOrder = [...Array(rawData.length).keys()];
-      for (let i = newOrder.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newOrder[i], newOrder[j]] = [newOrder[j], newOrder[i]];
-      }
-      setOrder(newOrder);
-      setIsShuffled(true);
-      setCurrentIndex(0);
-    }
-    setShowAnswer(false);
-  };
-
-  const nextCard = () => {
-    if (currentIndex < order.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-      setShowAnswer(false);
-    }
-  };
-
-  const prevCard = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-      setShowAnswer(false);
-    }
-  };
-
-  const speak = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.9; // Slightly slower for clarity
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  // Speak automatically when answer is shown (optional - currently manual only)
-  useEffect(() => {
-    // if (showAnswer) speak(currentPhrase.en);
-  }, [showAnswer, currentPhrase]);
-
-  const progressPercentage = ((currentIndex + 1) / rawData.length) * 100;
-
-  const filteredList = rawData.filter(item => 
-    item.es.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    item.en.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
-      {/* Header */}
-      <header className="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">Masa Crítica</h1>
-            <p className="text-slate-400 text-xs">Agilidad Verbal - 105 Estructuras</p>
-          </div>
-          <div className="flex gap-2">
-             <button 
-              onClick={() => setMode('card')}
-              className={`p-2 rounded-lg transition-colors ${mode === 'card' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
-              title="Modo Tarjetas"
-            >
-              <Layout size={20} />
-            </button>
-            <button 
-              onClick={() => setMode('list')}
-              className={`p-2 rounded-lg transition-colors ${mode === 'list' ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
-              title="Lista Completa"
-            >
-              <List size={20} />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-3xl mx-auto w-full p-4 flex flex-col">
-        
-        {mode === 'card' && (
-          <div className="flex flex-col h-full justify-center py-4">
-            
-            {/* Progress Bar */}
-            <div className="mb-6">
-              <div className="flex justify-between text-xs text-slate-500 mb-1">
-                <span>Frase {currentIndex + 1} de {rawData.length}</span>
-                <span>{isShuffled ? 'Aleatorio' : 'Secuencial'}</span>
-              </div>
-              <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-indigo-500 transition-all duration-300" 
-                  style={{ width: `${progressPercentage}%` }}
-                />
-              </div>
+    <!-- Header -->
+    <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-20 shrink-0">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">Masa Crítica</h1>
+                <p class="text-slate-400 text-xs">Agilidad Verbal - 105 Estructuras</p>
             </div>
-
-            {/* Card */}
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 flex-1 flex flex-col relative min-h-[400px]">
-              {/* Card Controls */}
-              <div className="absolute top-4 right-4 z-10">
-                 <button 
-                  onClick={toggleShuffle}
-                  className={`p-2 rounded-full transition-all ${isShuffled ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
-                  title="Modo Aleatorio"
-                >
-                  <Shuffle size={18} />
+            <div class="flex gap-2">
+                <button onclick="setMode('card')" id="btn-mode-card" class="p-2 rounded-lg transition-colors bg-indigo-600 text-white shadow-sm">
+                    <i data-lucide="layout"></i>
                 </button>
-              </div>
+                <button onclick="setMode('list')" id="btn-mode-list" class="p-2 rounded-lg transition-colors bg-slate-800 text-slate-400 hover:bg-slate-700">
+                    <i data-lucide="list"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-              <div className="flex-1 flex flex-col items-center justify-center p-8 text-center cursor-pointer hover:bg-slate-50/50 transition-colors" onClick={() => setShowAnswer(!showAnswer)}>
+    <!-- Main Content -->
+    <main class="flex-1 max-w-3xl mx-auto w-full p-4 flex flex-col overflow-hidden relative">
+        
+        <!-- VISTA TARJETAS (CARD MODE) -->
+        <div id="view-card" class="flex flex-col h-full justify-center py-2 h-full">
+            
+            <!-- Progress Bar -->
+            <div class="mb-4 shrink-0">
+                <div class="flex justify-between text-xs text-slate-500 mb-1 font-medium">
+                    <span id="progress-text">Frase 1 de 105</span>
+                    <span id="shuffle-indicator" class="flex items-center gap-1">Secuencial</span>
+                </div>
+                <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-indigo-500 transition-all duration-300 ease-out" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <!-- Card Container -->
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 flex-1 flex flex-col relative w-full mb-4 transition-shadow hover:shadow-2xl">
                 
-                {/* Spanish (Always Visible) */}
-                <div className="mb-12 w-full">
-                   <span className="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold mb-4 tracking-wide uppercase">
-                     Español
-                   </span>
-                   <h2 className="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">
-                     {currentPhrase.es}
-                   </h2>
+                <!-- Shuffle Button -->
+                <div class="absolute top-4 right-4 z-10">
+                    <button onclick="toggleShuffle()" id="btn-shuffle" class="p-3 rounded-full transition-all bg-slate-50 text-slate-400 hover:bg-slate-100 active:scale-95 border border-slate-100">
+                        <i data-lucide="shuffle" class="w-5 h-5"></i>
+                    </button>
                 </div>
 
-                {/* English (Revealed) */}
-                <div className={`w-full transition-all duration-500 transform ${showAnswer ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
-                   <div className="w-full h-px bg-slate-200 mb-8 mx-auto max-w-[200px]"></div>
-                   <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold mb-4 tracking-wide uppercase">
-                     Inglés
-                   </span>
-                   <h3 className="text-2xl md:text-3xl font-medium text-indigo-700 leading-tight">
-                     {currentPhrase.en}
-                   </h3>
-                   
-                   <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      speak(currentPhrase.en);
-                    }}
-                    className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full hover:bg-indigo-100 transition-colors"
-                   >
-                     <Volume2 size={18} />
-                     <span className="text-sm font-medium">Escuchar</span>
-                   </button>
-                </div>
+                <!-- Card Content Area -->
+                <div class="flex-1 flex flex-col items-center justify-center p-6 text-center cursor-pointer hover:bg-slate-50/30 transition-colors w-full touch-action-manipulation no-select" onclick="toggleAnswer()">
+                    
+                    <!-- Spanish Section -->
+                    <div class="mb-8 w-full animate-fadeIn">
+                        <span class="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-bold mb-4 tracking-wide uppercase shadow-sm">Español</span>
+                        <h2 id="text-es" class="text-2xl md:text-4xl font-bold text-slate-800 leading-tight">Cargando...</h2>
+                    </div>
 
-                {/* Tap Hint */}
-                {!showAnswer && (
-                  <div className="absolute bottom-8 text-slate-400 text-sm animate-pulse flex items-center gap-2">
-                    <Eye size={16} /> Toca para ver la respuesta
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Navigation Controls */}
-            <div className="flex items-center justify-between gap-4 mt-8">
-              <button 
-                onClick={prevCard} 
-                disabled={currentIndex === 0}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-700 font-medium hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95"
-              >
-                <ChevronLeft size={20} /> Anterior
-              </button>
-              
-              <button 
-                onClick={() => {
-                  setOrder([...Array(rawData.length).keys()]);
-                  setCurrentIndex(0);
-                  setIsShuffled(false);
-                  setShowAnswer(false);
-                }}
-                className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all active:scale-95"
-                title="Reiniciar"
-              >
-                <RotateCcw size={20} />
-              </button>
-
-              <button 
-                onClick={nextCard}
-                disabled={currentIndex === order.length - 1}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-200 text-white font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:bg-slate-300 disabled:shadow-none transition-all active:scale-95"
-              >
-                Siguiente <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {mode === 'list' && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
-            <div className="p-4 border-b border-slate-100 bg-slate-50">
-              <input
-                type="text"
-                placeholder="Buscar frase..."
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="overflow-y-auto flex-1 p-2">
-              <table className="w-full text-left border-collapse">
-                <thead className="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0">
-                  <tr>
-                    <th className="p-3 font-semibold rounded-tl-lg">#</th>
-                    <th className="p-3 font-semibold">Español</th>
-                    <th className="p-3 font-semibold rounded-tr-lg">Inglés</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
-                  {filteredList.map((phrase) => (
-                    <tr key={phrase.id} className="hover:bg-indigo-50/50 transition-colors group">
-                      <td className="p-3 text-slate-400 font-mono text-xs w-12">{phrase.id}</td>
-                      <td className="p-3 font-medium text-slate-800">{phrase.es}</td>
-                      <td className="p-3 text-indigo-700 flex items-center justify-between gap-2">
-                        <span>{phrase.en}</span>
-                        <button 
-                          onClick={() => speak(phrase.en)}
-                          className="opacity-0 group-hover:opacity-100 p-1.5 bg-indigo-100 text-indigo-700 rounded-full hover:bg-indigo-200 transition-all"
-                          title="Escuchar"
-                        >
-                          <Volume2 size={14} />
+                    <!-- English Section (Hidden by default) -->
+                    <div id="answer-section" class="w-full transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
+                        <div class="w-full h-px bg-slate-200 mb-6 mx-auto max-w-[120px]"></div>
+                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold mb-4 tracking-wide uppercase shadow-sm">Inglés</span>
+                        <h3 id="text-en" class="text-xl md:text-3xl font-medium text-indigo-700 leading-tight mb-6">Loading...</h3>
+                        
+                        <button onclick="event.stopPropagation(); speakCurrent();" class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-50 text-indigo-700 rounded-full hover:bg-indigo-100 transition-colors active:scale-95 shadow-sm border border-indigo-100">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            <span class="text-sm font-semibold">Escuchar</span>
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {filteredList.length === 0 && (
-                    <tr>
-                      <td colSpan="3" className="p-8 text-center text-slate-400">
-                        No se encontraron frases.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
+                    </div>
 
-      </main>
-    </div>
-  );
-}
+                    <!-- Hint -->
+                    <div id="tap-hint" class="absolute bottom-8 text-slate-400 text-xs font-medium animate-pulse flex items-center gap-2 uppercase tracking-wide">
+                        <i data-lucide="eye" class="w-4 h-4"></i> Toca para ver respuesta
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex items-center justify-between gap-3 shrink-0 mb-safe">
+                <button onclick="prevCard()" id="btn-prev" class="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-600 font-semibold hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed active:bg-slate-100 transition-all touch-action-manipulation">
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i> Anterior
+                </button>
+                
+                <button onclick="resetApp()" class="p-4 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-500 hover:text-indigo-600 active:bg-slate-100 transition-all" title="Reiniciar">
+                    <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                </button>
+
+                <button onclick="nextCard()" id="btn-next" class="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-indigo-600 shadow-lg shadow-indigo-200 text-white font-bold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] transition-all touch-action-manipulation">
+                    Siguiente <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VISTA LISTA (LIST MODE) -->
+        <div id="view-list" class="hidden flex-col h-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                    <input type="text" id="search-input" placeholder="Buscar frase..." onkeyup="renderList()" 
+                        class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-base bg-white">
+                </div>
+            </div>
+            <div class="overflow-y-auto flex-1 p-0 custom-scrollbar">
+                <table class="w-full text-left border-collapse">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 shadow-sm z-10">
+                        <tr>
+                            <th class="p-3 font-semibold text-center w-12">#</th>
+                            <th class="p-3 font-semibold">Frase</th>
+                        </tr>
+                    </thead>
+                    <tbody id="list-body" class="divide-y divide-slate-100 text-sm">
+                        <!-- JS llenará esto -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // DATOS COMPLETOS
+        const rawData = [
+            { id: 1, es: "Es un teléfono.", en: "It's a telephone." },
+            { id: 2, es: "Estoy aquí.", en: "I'm here." },
+            { id: 3, es: "La casa es grande.", en: "The house is big." },
+            { id: 4, es: "¿Dónde está?", en: "Where is it?" },
+            { id: 5, es: "¿Quién eres?", en: "Who are you?" },
+            { id: 6, es: "¿De dónde eres?", en: "Where are you from?" },
+            { id: 7, es: "El libro rojo está en la mesa.", en: "The red book is on the table." },
+            { id: 8, es: "¿Está el libro en tu bolsillo?", en: "Is the book in your pocket?" },
+            { id: 9, es: "Aquél no es tu coche.", en: "That isn't your car." },
+            { id: 10, es: "Mis hijos están en el colegio.", en: "My children are at school." },
+            { id: 11, es: "Él no habla tanto como tú.", en: "He doesn't talk as much as you do." },
+            { id: 12, es: "¿Por qué no dices algo?", en: "Why don't you say something?" },
+            { id: 13, es: "Fumas demasiados puros.", en: "You smoke too many cigars." },
+            { id: 14, es: "No fumo tantos como él.", en: "I don't smoke as many as he does." },
+            { id: 15, es: "¿No te fías de mí?", en: "Don't you trust me?" },
+            { id: 16, es: "¿Trabajas demasiado?", en: "Do you work too much?" },
+            { id: 17, es: "Casi nunca como pan.", en: "I hardly ever eat bread." },
+            { id: 18, es: "¿A qué hora sale el avión?", en: "What time does the plane leave?" },
+            { id: 19, es: "Da igual.", en: "It doesn't matter." },
+            { id: 20, es: "Me duele el hombro.", en: "My shoulder hurts." },
+            { id: 21, es: "¿Qué le dijo el lobo cuando la vio?", en: "What did the wolf say to her when he saw her?" },
+            { id: 22, es: "Ella le dijo que iba a casa.", en: "She told him she was going home." },
+            { id: 23, es: "¿La comió el lobo al final?", en: "Did the wolf eat her at the end?" },
+            { id: 24, es: "El cazador lo mató.", en: "The hunter killed him." },
+            { id: 25, es: "¿Qué hacías cuando ocurrió?", en: "What were you doing when it happened?" },
+            { id: 26, es: "No fue culpa mía.", en: "It wasn't my fault." },
+            { id: 27, es: "Hubo algunos problemas al principio.", en: "There were some problems at the beginning." },
+            { id: 28, es: "¿Cuándo lo oíste?", en: "When did you hear it?" },
+            { id: 29, es: "Me costó mucho.", en: "It cost me a lot." },
+            { id: 30, es: "¿Quién trajo el dinero?", en: "Who brought the money?" },
+            { id: 31, es: "Lo haré cuando pueda.", en: "I'll do it when I can." },
+            { id: 32, es: "Le veré en cuanto pueda.", en: "I'll see him as soon as I can." },
+            { id: 33, es: "¿Cuándo estarán aquí?", en: "When will they be here?" },
+            { id: 34, es: "Vendrán cuando yo les llame.", en: "They'll come when I call them." },
+            { id: 35, es: "Voy a decirte algo que no te va a gustar.", en: "I'm going to tell you something you're not going to like." },
+            { id: 36, es: "¿Qué pasará si alguien se entera?", en: "What will happen if someone finds out?" },
+            { id: 37, es: "Si apruebas el examen, aprobarás el curso.", en: "If you pass the exam, you'll pass the course." },
+            { id: 38, es: "Habrá una investigación.", en: "There will be an investigation." },
+            { id: 39, es: "Te llamaremos en cuanto lo recibamos.", en: "We'll call you as soon as we receive it." },
+            { id: 40, es: "¿Qué vas a hacer?", en: "What are you going to do?" },
+            { id: 41, es: "Quiero que vayas con él.", en: "I want you to go with him." },
+            { id: 42, es: "No quiero que él sepa nada.", en: "I don't want him to know anything." },
+            { id: 43, es: "Me dijeron que le buscara.", en: "They told me to look for him." },
+            { id: 44, es: "Te dije que no tocaras nada.", en: "I told you not to touch anything." },
+            { id: 45, es: "¿Quién te dijo que me llamaras?", en: "Who told you to call me?" },
+            { id: 46, es: "Quiero que me mires.", en: "I want you to look at me." },
+            { id: 47, es: "Diles que tengan cuidado.", en: "Tell them to be careful." },
+            { id: 48, es: "¿Qué quieres que yo haga?", en: "What do you want me to do?" },
+            { id: 49, es: "¿A dónde quieres que te lleve?", en: "Where do you want me to take you?" },
+            { id: 50, es: "Pídeles que no fumen.", en: "Ask them not to smoke." },
+            { id: 51, es: "Tengo que irme.", en: "I have to go." },
+            { id: 52, es: "No tienes que hacer eso.", en: "You don't have to do that." },
+            { id: 53, es: "Deben ser malos.", en: "They must be bad." },
+            { id: 54, es: "Debe de haber un error.", en: "There must be a mistake." },
+            { id: 55, es: "¿Se puede entrar?", en: "May I come in?" },
+            { id: 56, es: "No puedo evitarlo.", en: "I can't help it." },
+            { id: 57, es: "Deberías tener más cuidado.", en: "You should be more careful." },
+            { id: 58, es: "¿Puedes hablar un poco más alto?", en: "Can you speak a little louder?" },
+            { id: 59, es: "Tienes que hacerlo de esta forma.", en: "You have to do it this way." },
+            { id: 60, es: "Querer es poder.", en: "Where there's a will, there's a way." },
+            { id: 61, es: "Depende de ti.", en: "It depends on you." },
+            { id: 62, es: "Estoy buscando mis llaves.", en: "I'm looking for my keys." },
+            { id: 63, es: "Se me olvidó el paraguas.", en: "I forgot my umbrella." },
+            { id: 64, es: "¿En qué basas tu opinión?", en: "What do you base your opinion on?" },
+            { id: 65, es: "Tíralo.", en: "Throw it away." },
+            { id: 66, es: "Póntelo.", en: "Put it on." },
+            { id: 67, es: "Quítatelo.", en: "Take it off." },
+            { id: 68, es: "Se acabó la fiesta.", en: "The party is over." },
+            { id: 69, es: "Me levanté pronto.", en: "I got up early." },
+            { id: 70, es: "Sigue intentando.", en: "Keep trying." },
+            { id: 71, es: "En realidad, no lo sé.", en: "Actually, I don't know." },
+            { id: 72, es: "¿Puedo asistir a la reunión?", en: "Can I attend the meeting?" },
+            { id: 73, es: "Estoy constipado.", en: "I have a cold." },
+            { id: 74, es: "Me siento avergonzada.", en: "I feel embarrassed." },
+            { id: 75, es: "Es una persona muy sensible.", en: "She is a very sensitive person." },
+            { id: 76, es: "Es una persona muy sensata.", en: "She is a very sensible person." },
+            { id: 77, es: "La historia fue interesante.", en: "The story was interesting." },
+            { id: 78, es: "Estoy de acuerdo.", en: "I agree." },
+            { id: 79, es: "La gente es rica.", en: "People are rich." },
+            { id: 80, es: "Llevo dos años aquí.", en: "I have been here for two years." },
+            { id: 81, es: "Sigue intentando.", en: "Keep trying." },
+            { id: 82, es: "Mantén los ojos abiertos.", en: "Keep your eyes open." },
+            { id: 83, es: "No te rías de mí.", en: "Don't laugh at me." },
+            { id: 84, es: "Deja de llorar.", en: "Stop crying." },
+            { id: 85, es: "Pruébalo antes de decidir.", en: "Try it before deciding." },
+            { id: 86, es: "Estás engordando.", en: "You're getting fat." },
+            { id: 87, es: "Soy un fracasado.", en: "I'm a failure." },
+            { id: 88, es: "¿Te importa que yo fume?", en: "Do you mind if I smoke?" },
+            { id: 89, es: "No me gusta tirar las cosas.", en: "I don't like to throw things away." },
+            { id: 90, es: "Eres un hombre afortunado.", en: "You're a lucky man." },
+            { id: 91, es: "¿A quién llamaste?", en: "Who did you call?" },
+            { id: 92, es: "¿Quién te llamó?", en: "Who called you?" },
+            { id: 93, es: "Nadie me dijo nada.", en: "Nobody told me anything." },
+            { id: 94, es: "¿Por qué no me llaman?", en: "Why don't they call me?" },
+            { id: 95, es: "Se lo agradecí.", en: "I thanked him for it." },
+            { id: 96, es: "¿Puedo pedirte un favor?", en: "Can I ask you a favor?" },
+            { id: 97, es: "No me importa en absoluto.", en: "I don't mind at all." },
+            { id: 98, es: "Tendrás que demostrar tu valía.", en: "You'll have to prove your worth." },
+            { id: 99, es: "¿Se puede?", en: "Is it possible?" },
+            { id: 100, es: "No es obligatorio.", en: "It's not obligatory." },
+            { id: 101, es: "Había una mujer aquí ayer.", en: "There was a woman here yesterday." },
+            { id: 102, es: "Llovía cuando salimos.", en: "It was raining when we left." },
+            { id: 103, es: "Estaré aquí toda la tarde.", en: "I'll be here all afternoon." },
+            { id: 104, es: "Me vestí después del desayuno.", en: "I got dressed after breakfast. " },
+            { id: 105, es: "¿Cuándo estará listo?", en: "When will it be ready?" }
+        ];
+
+        // ESTADO GLOBAL
+        let state = {
+            mode: 'card', // 'card' or 'list'
+            currentIndex: 0,
+            showAnswer: false,
+            isShuffled: false,
+            order: [...Array(rawData.length).keys()], // [0, 1, 2... 104]
+            searchTerm: ''
+        };
+
+        // REFERENCIAS AL DOM
+        const els = {
+            viewCard: document.getElementById('view-card'),
+            viewList: document.getElementById('view-list'),
+            btnModeCard: document.getElementById('btn-mode-card'),
+            btnModeList: document.getElementById('btn-mode-list'),
+            
+            // Tarjeta
+            textEs: document.getElementById('text-es'),
+            textEn: document.getElementById('text-en'),
+            answerSection: document.getElementById('answer-section'),
+            tapHint: document.getElementById('tap-hint'),
+            progressText: document.getElementById('progress-text'),
+            progressBar: document.getElementById('progress-bar'),
+            shuffleIndicator: document.getElementById('shuffle-indicator'),
+            
+            // Botones
+            btnShuffle: document.getElementById('btn-shuffle'),
+            btnPrev: document.getElementById('btn-prev'),
+            btnNext: document.getElementById('btn-next'),
+            
+            // Lista
+            listBody: document.getElementById('list-body'),
+            searchInput: document.getElementById('search-input')
+        };
+
+        // INICIALIZACIÓN
+        function init() {
+            lucide.createIcons();
+            renderCard();
+            renderList();
+        }
+
+        // --- LÓGICA PRINCIPAL ---
+
+        function setMode(mode) {
+            state.mode = mode;
+            if (mode === 'card') {
+                els.viewCard.classList.remove('hidden');
+                els.viewList.classList.add('hidden');
+                els.viewList.classList.remove('flex');
+                
+                els.btnModeCard.classList.remove('bg-slate-800', 'text-slate-400');
+                els.btnModeCard.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                
+                els.btnModeList.classList.add('bg-slate-800', 'text-slate-400');
+                els.btnModeList.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+            } else {
+                els.viewCard.classList.add('hidden');
+                els.viewList.classList.remove('hidden');
+                els.viewList.classList.add('flex');
+                
+                els.btnModeList.classList.remove('bg-slate-800', 'text-slate-400');
+                els.btnModeList.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                
+                els.btnModeCard.classList.add('bg-slate-800', 'text-slate-400');
+                els.btnModeCard.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+            }
+        }
+
+        function toggleShuffle() {
+            state.showAnswer = false;
+            state.currentIndex = 0;
+            
+            if (state.isShuffled) {
+                // Reset a secuencial
+                state.order = [...Array(rawData.length).keys()];
+                state.isShuffled = false;
+            } else {
+                // Barajar (Algoritmo Fisher-Yates)
+                let array = [...Array(rawData.length).keys()];
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                state.order = array;
+                state.isShuffled = true;
+            }
+            renderCard();
+        }
+
+        function nextCard() {
+            if (state.currentIndex < state.order.length - 1) {
+                state.currentIndex++;
+                state.showAnswer = false;
+                renderCard();
+            }
+        }
+
+        function prevCard() {
+            if (state.currentIndex > 0) {
+                state.currentIndex--;
+                state.showAnswer = false;
+                renderCard();
+            }
+        }
+
+        function resetApp() {
+            state.currentIndex = 0;
+            state.showAnswer = false;
+            if (state.isShuffled) toggleShuffle(); // Esto reseteará el orden también
+            renderCard();
+        }
+
+        function toggleAnswer() {
+            state.showAnswer = !state.showAnswer;
+            updateAnswerVisibility();
+        }
+
+        function speakCurrent() {
+            const index = state.order[state.currentIndex];
+            const text = rawData[index].en;
+            speakText(text);
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Detener anterior
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Tu navegador no soporta audio.");
+            }
+        }
+
+        // --- RENDERIZADO VISUAL ---
+
+        function updateAnswerVisibility() {
+            if (state.showAnswer) {
+                els.answerSection.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+                els.answerSection.classList.add('opacity-100', 'translate-y-0');
+                els.tapHint.classList.add('hidden');
+            } else {
+                els.answerSection.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+                els.answerSection.classList.remove('opacity-100', 'translate-y-0');
+                els.tapHint.classList.remove('hidden');
+            }
+        }
+
+        function renderCard() {
+            const index = state.order[state.currentIndex];
+            const data = rawData[index];
+
+            // Textos
+            els.textEs.textContent = data.es;
+            els.textEn.textContent = data.en;
+            
+            // Barra progreso
+            const progress = ((state.currentIndex + 1) / rawData.length) * 100;
+            els.progressBar.style.width = `${progress}%`;
+            els.progressText.textContent = `Frase ${state.currentIndex + 1} de ${rawData.length}`;
+            
+            // Estado Shuffle
+            els.shuffleIndicator.innerHTML = state.isShuffled 
+                ? '<i data-lucide="shuffle" class="w-3 h-3"></i> Aleatorio' 
+                : 'Secuencial';
+            
+            if (state.isShuffled) {
+                els.btnShuffle.classList.remove('bg-slate-50', 'text-slate-400');
+                els.btnShuffle.classList.add('bg-indigo-100', 'text-indigo-700', 'border-indigo-200');
+            } else {
+                els.btnShuffle.classList.add('bg-slate-50', 'text-slate-400');
+                els.btnShuffle.classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-200');
+            }
+
+            // Botones navegación (Estado disabled)
+            els.btnPrev.disabled = state.currentIndex === 0;
+            if(els.btnPrev.disabled) els.btnPrev.classList.add('opacity-50', 'cursor-not-allowed');
+            else els.btnPrev.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            els.btnNext.disabled = state.currentIndex === state.order.length - 1;
+            if(els.btnNext.disabled) els.btnNext.classList.add('opacity-50', 'cursor-not-allowed');
+            else els.btnNext.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            // Resetear respuesta
+            updateAnswerVisibility();
+            
+            // Actualizar iconos
+            lucide.createIcons();
+        }
+
+        function renderList() {
+            const term = els.searchInput.value.toLowerCase();
+            const filtered = rawData.filter(item => 
+                item.es.toLowerCase().includes(term) || 
+                item.en.toLowerCase().includes(term)
+            );
+
+            let html = '';
+            if (filtered.length === 0) {
+                html = `
+                    <tr>
+                        <td colspan="2" class="p-8 text-center text-slate-400 flex flex-col items-center gap-2">
+                            <i data-lucide="search-x" class="w-8 h-8 opacity-50"></i>
+                            <span>No se encontraron frases.</span>
+                        </td>
+                    </tr>`;
+            } else {
+                filtered.forEach(item => {
+                    const safeText = item.en.replace(/'/g, "\\'");
+                    html += `
+                        <tr class="hover:bg-indigo-50/50 transition-colors border-b border-slate-50 last:border-0 cursor-pointer group" onclick="speakText('${safeText}')">
+                            <td class="p-3 text-slate-400 font-mono text-xs text-center align-top pt-4 select-none">${item.id}</td>
+                            <td class="p-3">
+                                <div class="font-medium text-slate-800 mb-1 leading-snug">${item.es}</div>
+                                <div class="text-indigo-600 flex items-center gap-2 text-sm">
+                                    ${item.en} 
+                                    <i data-lucide="volume-2" class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            els.listBody.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // Arrancar
+        window.onload = init;
+
+    </script>
+</body>
+</html>
