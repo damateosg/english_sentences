@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Masa Crítica 2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        :root {
+            --sab: env(safe-area-inset-bottom);
+            --accent: #6C63FF;
+            --accent2: #FF6584;
+            --dark: #0F0E17;
+            --card-bg: #1A1929;
+            --surface: #231F38;
+            --text: #FFFFFE;
+            --muted: #A7A9BE;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            height: 100dvh;
+            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+        }
+        h1, h2, h3, .font-display { font-family: 'Syne', sans-serif; }
+        .no-select { user-select: none; -webkit-user-select: none; }
+        .touch-action { touch-action: manipulation; }
+
+        /* Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 10px; }
+
+        /* Card glow */
+        .card-main {
+            background: var(--card-bg);
+            border: 1px solid rgba(108,99,255,0.15);
+            box-shadow: 0 0 40px rgba(108,99,255,0.08), 0 20px 60px rgba(0,0,0,0.4);
+            transition: box-shadow 0.3s ease;
+        }
+        .card-main.revealed {
+            box-shadow: 0 0 60px rgba(108,99,255,0.18), 0 20px 60px rgba(0,0,0,0.4);
+            border-color: rgba(108,99,255,0.3);
+        }
+
+        /* Answer reveal */
+        #answer-section {
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        #answer-section.hidden-answer {
+            opacity: 0;
+            transform: translateY(12px);
+            pointer-events: none;
+        }
+
+        /* Category badges */
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .badge-core { background: rgba(108,99,255,0.18); color: #a89fff; }
+        .badge-bridge { background: rgba(255,101,132,0.18); color: #ff8fa3; }
+        .badge-energy { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .badge-social { background: rgba(52,211,153,0.15); color: #34d399; }
+
+        /* Mastered overlay */
+        .mastered-overlay {
+            position: absolute; inset: 0; border-radius: inherit;
+            background: rgba(52,211,153,0.08);
+            pointer-events: none; opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .card-main.mastered .mastered-overlay { opacity: 1; }
+
+        /* Bottom nav */
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 8px 4px;
+            border-radius: 12px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 600;
+            transition: color 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+        .nav-btn.active { color: var(--accent); background: rgba(108,99,255,0.12); }
+
+        /* Progress bar */
+        #progress-bar {
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* Buttons */
+        .btn-next {
+            background: linear-gradient(135deg, var(--accent), #8B7CF8);
+            box-shadow: 0 4px 20px rgba(108,99,255,0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-next:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(108,99,255,0.3); }
+
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.15s, transform 0.15s;
+        }
+        .btn-secondary:active { background: #2d2848; transform: scale(0.96); }
+
+        /* Star button */
+        .btn-star { transition: transform 0.2s, color 0.2s; }
+        .btn-star:active { transform: scale(0.85); }
+        .btn-star.starred { color: #ffc107; }
+
+        /* List items */
+        .list-item {
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+        .list-item:active { background: rgba(108,99,255,0.08); }
+
+        /* Stats */
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        /* Hint pulse */
+        @keyframes pulse-hint { 0%,100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+        #tap-hint { animation: pulse-hint 2s ease-in-out infinite; }
+
+        /* Category filter pills */
+        .filter-pill {
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted);
+            background: var(--surface);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .filter-pill.active-pill {
+            background: rgba(108,99,255,0.25);
+            border-color: rgba(108,99,255,0.5);
+            color: #c5c0ff;
+        }
+
+        /* Swipe animation */
+        @keyframes swipe-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-60px); opacity: 0; } }
+        @keyframes swipe-right { from { transform: translateX(0); opacity: 1; } to { transform: translateX(60px); opacity: 0; } }
+        @keyframes slide-in-right { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slide-in-left { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .anim-swipe-left { animation: swipe-left 0.2s ease forwards; }
+        .anim-swipe-right { animation: swipe-right 0.2s ease forwards; }
+        .anim-in-right { animation: slide-in-right 0.25s ease forwards; }
+        .anim-in-left { animation: slide-in-left 0.25s ease forwards; }
+
+        input::placeholder { color: var(--muted); opacity: 0.6; }
+        input { caret-color: var(--accent); }
+    </style>
+</head>
+<body class="flex flex-col overflow-hidden">
+
+    <header class="shrink-0 px-4 py-3 flex items-center justify-between" style="padding-top: calc(0.75rem + env(safe-area-inset-top))">
+        <div>
+            <h1 class="font-display text-lg font-bold tracking-tight" style="color: var(--text)">Masa Crítica</h1>
+            <p class="text-xs font-medium" style="color: var(--muted)" id="total-label">120 estructuras · 0 dominadas</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="showPanel('stats')" id="hdr-stats" class="p-2 rounded-xl btn-secondary">
+                <i data-lucide="bar-chart-2" class="w-4 h-4" style="color: var(--muted)"></i>
+            </button>
+            <button onclick="toggleShuffle()" id="btn-shuffle" class="p-2 rounded-xl btn-secondary">
+                <i data-lucide="shuffle" class="w-4 h-4" id="shuffle-icon" style="color: var(--muted)"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-hidden flex flex-col px-4 pb-2" style="min-height:0">
+
+        <div id="view-card" class="flex flex-col h-full">
+
+            <div class="mb-3 shrink-0">
+                <div class="flex justify-between text-xs mb-1.5 font-semibold" style="color: var(--muted)">
+                    <span id="progress-text">1 / 120</span>
+                    <span id="cat-label" class="badge badge-core">Core</span>
+                </div>
+                <div class="h-1 rounded-full overflow-hidden" style="background: var(--surface)">
+                    <div id="progress-bar" class="h-full rounded-full" style="width: 1%"></div>
+                </div>
+            </div>
+
+            <div id="card-main" class="card-main rounded-3xl flex-1 flex flex-col relative mb-4 min-h-0 overflow-hidden no-select touch-action" onclick="toggleAnswer()">
+                <div class="mastered-overlay"></div>
+
+                <button onclick="event.stopPropagation(); toggleMastered()" id="btn-star" class="btn-star absolute top-3 right-3 z-10 p-2.5 rounded-full" style="color: var(--muted)">
+                    <i data-lucide="star" class="w-5 h-5"></i>
+                </button>
+
+                <div class="flex-1 flex flex-col items-center justify-center p-6 text-center overflow-y-auto custom-scrollbar">
+                    <span class="badge badge-core mb-4" id="badge-es">Español</span>
+                    <h2 id="text-es" class="font-display text-2xl md:text-3xl font-bold leading-tight mb-2" style="color: var(--text)">Cargando...</h2>
+
+                    <div class="w-12 h-px my-4 rounded-full" style="background: rgba(255,255,255,0.08)"></div>
+
+                    <div id="answer-section" class="hidden-answer w-full">
+                        <span class="badge mb-4" style="background:rgba(108,99,255,0.18);color:#a89fff">English</span>
+                        <h3 id="text-en" class="font-display text-xl md:text-2xl font-bold leading-tight mb-5" style="color: #a89fff">Loading...</h3>
+                        <button onclick="event.stopPropagation(); speakCurrent();" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm btn-secondary" style="color: var(--accent)">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i> Escuchar
+                        </button>
+                    </div>
+
+                    <p id="tap-hint" class="absolute bottom-5 text-xs font-bold uppercase tracking-widest" style="color: var(--muted)">Toca para revelar</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0" style="padding-bottom: calc(0.5rem + env(safe-area-inset-bottom))">
+                <button onclick="prevCard()" id="btn-prev" class="btn-secondary p-4 rounded-2xl disabled:opacity-20" disabled>
+                    <i data-lucide="chevron-left" class="w-5 h-5 mx-auto" style="color:var(--muted)"></i>
+                </button>
+                <button onclick="markAndNext()" class="btn-secondary p-4 rounded-2xl" title="Marcar dominada y avanzar">
+                    <i data-lucide="check-circle" class="w-5 h-5 mx-auto" style="color:#34d399"></i>
+                </button>
+                <button onclick="nextCard()" id="btn-next" class="btn-next flex-1 py-4 rounded-2xl text-white font-display font-bold text-sm tracking-wide">
+                    SIGUIENTE →
+                </button>
+            </div>
+        </div>
+
+        <div id="view-list" class="hidden flex-col h-full" style="min-height:0">
+            <div class="shrink-0 mb-3">
+                <input type="text" id="search-input" placeholder="Buscar frase..." onkeyup="renderList()"
+                    class="w-full px-4 py-3 rounded-2xl text-sm font-medium outline-none"
+                    style="background: var(--surface); color: var(--text); border: 1px solid rgba(255,255,255,0.06)">
+            </div>
+            <div class="flex gap-2 overflow-x-auto shrink-0 mb-3 pb-1 custom-scrollbar" style="scrollbar-width:none">
+                <button class="filter-pill active-pill" onclick="setFilter('all', this)">Todas</button>
+                <button class="filter-pill" onclick="setFilter('core', this)">Core</button>
+                <button class="filter-pill" onclick="setFilter('bridge', this)">Puente</button>
+                <button class="filter-pill" onclick="setFilter('energy', this)">Energía</button>
+                <button class="filter-pill" onclick="setFilter('social', this)">Social</button>
+                <button class="filter-pill" onclick="setFilter('mastered', this)">★ Dominadas</button>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scrollbar rounded-2xl" style="background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); min-height:0">
+                <div id="list-body"></div>
+            </div>
+        </div>
+
+        <div id="view-stats" class="hidden flex-col h-full overflow-y-auto custom-scrollbar gap-4 py-2">
+            <h2 class="font-display text-xl font-bold shrink-0">Tu progreso</h2>
+            <div class="grid grid-cols-2 gap-3 shrink-0">
+                <div class="stat-card text-center">
+                    <div class="font-display text-3xl font-bold" id="stat-mastered" style="color:#34d399">0</div>
+                    <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Dominadas</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="font-display text-3xl font-bold" id="stat-remaining" style="color:var(--accent)">120</div>
+                    <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Por dominar</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="font-display text-3xl font-bold" id="stat-pct" style="color:#ffc107">0%</div>
+                    <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Completado</div>
+                </div>
+                <div class="stat-card text-center">
+                    <div class="font-display text-3xl font-bold" id="stat-session" style="color:#ff8fa3">0</div>
+                    <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Esta sesión</div>
+                </div>
+            </div>
+
+            <div class="stat-card shrink-0">
+                <p class="text-xs font-bold uppercase tracking-wider mb-3" style="color:var(--muted)">Por categoría</p>
+                <div id="cat-breakdown" class="space-y-3"></div>
+            </div>
+
+            <button onclick="resetProgress()" class="btn-secondary py-3 rounded-2xl text-sm font-semibold shrink-0" style="color:var(--accent2)">
+                Reiniciar progreso
+            </button>
+        </div>
+    </main>
+
+    <nav class="shrink-0 flex px-4 gap-1" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom)); background: var(--dark); border-top: 1px solid rgba(255,255,255,0.04)">
+        <button class="nav-btn active" id="nav-card" onclick="showPanel('card')">
+            <i data-lucide="layout" class="w-5 h-5"></i>
+            <span>Tarjetas</span>
+        </button>
+        <button class="nav-btn" id="nav-list" onclick="showPanel('list')">
+            <i data-lucide="list" class="w-5 h-5"></i>
+            <span>Lista</span>
+        </button>
+        <button class="nav-btn" id="nav-stats" onclick="showPanel('stats')">
+            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            <span>Progreso</span>
+        </button>
+    </nav>
+
+    <script>
+    // ─── DATA ────────────────────────────────────────────────────────────────
+    const rawData = [
+        // CORE (original 30 from the system prompt + app originals)
+        { id:1,  cat:'core', es:"Me pongo nervioso antes de las reuniones.", en:"I get nervous before meetings." },
+        { id:2,  cat:'core', es:"Él vive aquí, ¿verdad?", en:"He lives here, doesn't he?" },
+        { id:3,  cat:'core', es:"¿Qué harías si fueras el jefe?", en:"What would you do if you were the boss?" },
+        { id:4,  cat:'core', es:"¿Dónde está?", en:"Where is it?" },
+        { id:5,  cat:'core', es:"Esa es la mujer que me llamó.", en:"That's the woman who called me." },
+        { id:6,  cat:'core', es:"¿De dónde eres?", en:"Where are you from?" },
+        { id:7,  cat:'core', es:"Hicimos que ellos lo hicieran.", en:"We made them do it." },
+        { id:8,  cat:'core', es:"Yo solía fumar mucho.", en:"I used to smoke a lot." },
+        { id:9,  cat:'core', es:"Él no habla tanto como tú.", en:"He doesn't talk as much as you do." },
+        { id:10, cat:'core', es:"¿Por qué no dices algo?", en:"Why don't you say something?" },
+        { id:11, cat:'core', es:"Casi nunca como pan.", en:"I hardly ever eat bread." },
+        { id:12, cat:'core', es:"¿A qué hora sale el avión?", en:"What time does the plane leave?" },
+        { id:13, cat:'core', es:"Da igual.", en:"It doesn't matter." },
+        { id:14, cat:'core', es:"Me duele el hombro.", en:"My shoulder hurts." },
+        { id:15, cat:'core', es:"Estaba a punto de llamarte.", en:"I was about to call you." },
+        { id:16, cat:'core', es:"Se me olvidó hacerlo.", en:"I forgot to do it." },
+        { id:17, cat:'core', es:"Depende de lo que quieras.", en:"It depends on what you want." },
+        { id:18, cat:'core', es:"No tiene sentido.", en:"It doesn't make sense." },
+        { id:19, cat:'core', es:"Ya me encargo yo.", en:"I'll take care of it." },
+        { id:20, cat:'core', es:"Lo haré luego.", en:"I'll do it later." },
+        { id:21, cat:'core', es:"¿Qué quieres decir exactamente?", en:"What do you mean exactly?" },
+        { id:22, cat:'core', es:"No estoy seguro de eso.", en:"I'm not sure about that." },
+        { id:23, cat:'core', es:"Pensé que ya lo sabías.", en:"I thought you already knew." },
+        { id:24, cat:'core', es:"No me di cuenta.", en:"I didn't realize." },
+        { id:25, cat:'core', es:"Al final no fui.", en:"I didn't end up going." },
+        { id:26, cat:'core', es:"Sigo pensando lo mismo.", en:"I still think the same." },
+        { id:27, cat:'core', es:"No merece la pena.", en:"It's not worth it." },
+        { id:28, cat:'core', es:"Es mejor así.", en:"It's better this way." },
+        { id:29, cat:'core', es:"¿Te importa si…?", en:"Do you mind if…?" },
+        { id:30, cat:'core', es:"No tengo ganas de…", en:"I don't feel like…" },
+        { id:31, cat:'core', es:"Acabo de hacerlo.", en:"I just did it." },
+        { id:32, cat:'core', es:"Llevo tiempo pensando en eso.", en:"I've been thinking about that for a while." },
+        { id:33, cat:'core', es:"No es para tanto.", en:"It's not a big deal." },
+        { id:34, cat:'core', es:"Tiene buena pinta.", en:"It looks good." },
+        { id:35, cat:'core', es:"No tengo ni idea.", en:"I have no idea." },
+        { id:36, cat:'core', es:"Eso suena bien.", en:"That sounds good." },
+        { id:37, cat:'core', es:"Estoy de acuerdo contigo.", en:"I agree with you." },
+        { id:38, cat:'core', es:"No estoy de acuerdo.", en:"I don't agree." },
+        { id:39, cat:'core', es:"Depende de cómo lo mires.", en:"It depends on how you look at it." },
+        { id:40, cat:'core', es:"Iba a decírtelo.", en:"I was going to tell you." },
+        { id:41, cat:'core', es:"No es lo que esperaba.", en:"It's not what I expected." },
+        { id:42, cat:'core', es:"Todo salió bien.", en:"Everything went well." },
+        { id:43, cat:'core', es:"Deberías tener más cuidado.", en:"You should be more careful." },
+        { id:44, cat:'core', es:"No puedo evitarlo.", en:"I can't help it." },
+        { id:45, cat:'core', es:"Depende de ti.", en:"It depends on you." },
+        { id:46, cat:'core', es:"Estoy buscando mis llaves.", en:"I'm looking for my keys." },
+        { id:47, cat:'core', es:"¿Te importa que yo fume?", en:"Do you mind if I smoke?" },
+        { id:48, cat:'core', es:"Nadie me dijo nada.", en:"Nobody told me anything." },
+        { id:49, cat:'core', es:"¿Puedo pedirte un favor?", en:"Can I ask you a favor?" },
+        { id:50, cat:'core', es:"No me importa en absoluto.", en:"I don't mind at all." },
+        { id:51, cat:'core', es:"Llovía cuando salimos.", en:"It was raining when we left." },
+        { id:52, cat:'core', es:"¿Cuándo estará listo?", en:"When will it be ready?" },
+        { id:53, cat:'core', es:"Llevo dos años aquí.", en:"I have been here for two years." },
+        { id:54, cat:'core', es:"Se tarda mucho en aprender inglés.", en:"It takes a long time to learn English." },
+        { id:55, cat:'core', es:"¿Cómo lo ves?", en:"What do you think about it?" },
+
+        // BRIDGE — frases puente para gestionar la conversación
+        { id:56, cat:'bridge', es:"Lo que quiero decir es…", en:"What I mean is…" },
+        { id:57, cat:'bridge', es:"¿Cómo lo digo…?", en:"How can I put this…?" },
+        { id:58, cat:'bridge', es:"Espera un momento.", en:"Hang on a second." },
+        { id:59, cat:'bridge', es:"Déjame pensarlo.", en:"Let me think about that." },
+        { id:60, cat:'bridge', es:"Volviendo a lo que decías…", en:"Going back to what you said…" },
+        { id:61, cat:'bridge', es:"Por lo que entiendo…", en:"As far as I understand…" },
+        { id:62, cat:'bridge', es:"En otras palabras…", en:"In other words…" },
+        { id:63, cat:'bridge', es:"Eso me recuerda que…", en:"That reminds me…" },
+        { id:64, cat:'bridge', es:"A propósito…", en:"By the way…" },
+        { id:65, cat:'bridge', es:"Dicho esto…", en:"That said…" },
+        { id:66, cat:'bridge', es:"No estaba pensando en eso.", en:"I wasn't thinking about that." },
+        { id:67, cat:'bridge', es:"Tiene sentido lo que dices.", en:"That makes sense." },
+        { id:68, cat:'bridge', es:"Es difícil de explicar.", en:"It's hard to explain." },
+        { id:69, cat:'bridge', es:"Ya sé a qué te refieres.", en:"I know what you mean." },
+        { id:70, cat:'bridge', es:"No lo había visto así.", en:"I hadn't thought of it that way." },
+
+        // ENERGY — frases de alta energía, urgencia, reacción
+        { id:71, cat:'energy', es:"¡En serio!", en:"I'm serious!" },
+        { id:72, cat:'energy', es:"¡Venga ya!", en:"Come on!" },
+        { id:73, cat:'energy', es:"Eso es culpa mía.", en:"That's on me." },
+        { id:74, cat:'energy', es:"¡Ni hablar!", en:"No way!" },
+        { id:75, cat:'energy', es:"¡Qué fuerte!", en:"That's wild!" },
+        { id:76, cat:'energy', es:"¡Exacto!", en:"Exactly!" },
+        { id:77, cat:'energy', es:"¡Lo sabía!", en:"I knew it!" },
+        { id:78, cat:'energy', es:"¡Date prisa!", en:"Hurry up!" },
+        { id:79, cat:'energy', es:"¡Suéltalo ya!", en:"Just say it!" },
+        { id:80, cat:'energy', es:"¡Me alegra oír eso!", en:"Glad to hear it!" },
+        { id:81, cat:'energy', es:"¡Eso fue increíble!", en:"That was amazing!" },
+        { id:82, cat:'energy', es:"¿Hablas en serio?", en:"Are you serious?" },
+        { id:83, cat:'energy', es:"No me lo esperaba.", en:"I didn't see that coming." },
+        { id:84, cat:'energy', es:"Cálmate.", en:"Take it easy." },
+        { id:85, cat:'energy', es:"¡Vamos!", en:"Let's go!" },
+
+        // SOCIAL — abrir, cerrar, cambiar de tema
+        { id:86, cat:'social', es:"¿Cómo te va?", en:"How's it going?" },
+        { id:87, cat:'social', es:"¿Qué hay de nuevo?", en:"What's new?" },
+        { id:88, cat:'social', es:"Ha sido un placer.", en:"It's been a pleasure." },
+        { id:89, cat:'social', es:"Nos vemos luego.", en:"See you later." },
+        { id:90, cat:'social', es:"Mantente en contacto.", en:"Stay in touch." },
+        { id:91, cat:'social', es:"¿Puedo preguntarte algo?", en:"Can I ask you something?" },
+        { id:92, cat:'social', es:"Cambiando de tema…", en:"Changing the subject…" },
+        { id:93, cat:'social', es:"¿Has tenido noticias de él?", en:"Have you heard from him?" },
+        { id:94, cat:'social', es:"¿Cómo está tu familia?", en:"How's your family doing?" },
+        { id:95, cat:'social', es:"No quiero molestarte.", en:"I don't want to bother you." },
+        { id:96, cat:'social', es:"Te lo agradezco mucho.", en:"I really appreciate it." },
+        { id:97, cat:'social', es:"No te preocupes por eso.", en:"Don't worry about it." },
+        { id:98, cat:'social', es:"¿Qué tal te fue?", en:"How did it go?" },
+        { id:99, cat:'social', es:"Te lo juro.", en:"I swear." },
+        { id:100,cat:'social', es:"Cuéntame más.", en:"Tell me more." },
+
+        // EXTRA core — frases de alta frecuencia adicionales
+        { id:101,cat:'core', es:"¿Tienes un momento?", en:"Do you have a minute?" },
+        { id:102,cat:'core', es:"Ya casi está.", en:"It's almost done." },
+        { id:103,cat:'core', es:"No es exactamente lo que buscaba.", en:"That's not exactly what I was looking for." },
+        { id:104,cat:'core', es:"Se me fue de la cabeza.", en:"It slipped my mind." },
+        { id:105,cat:'core', es:"Ya era hora.", en:"It's about time." },
+        { id:106,cat:'core', es:"¿Qué te parece si…?", en:"What if we…?" },
+        { id:107,cat:'core', es:"No sabía que eso era una opción.", en:"I didn't know that was an option." },
+        { id:108,cat:'core', es:"Vamos a ver.", en:"Let's see." },
+        { id:109,cat:'core', es:"Tiene todo el sentido.", en:"That makes total sense." },
+        { id:110,cat:'core', es:"Podría ser.", en:"Could be." },
+        { id:111,cat:'core', es:"Lo dudo.", en:"I doubt it." },
+        { id:112,cat:'core', es:"Hay que verlo para creerlo.", en:"You have to see it to believe it." },
+        { id:113,cat:'core', es:"¿Me estás tomando el pelo?", en:"Are you kidding me?" },
+        { id:114,cat:'core', es:"¿Qué se supone que significa eso?", en:"What's that supposed to mean?" },
+        { id:115,cat:'core', es:"No es culpa mía.", en:"It's not my fault." },
+        { id:116,cat:'core', es:"¿Qué está pasando?", en:"What's going on?" },
+        { id:117,cat:'core', es:"Déjame en paz.", en:"Leave me alone." },
+        { id:118,cat:'core', es:"No es momento para eso.", en:"This is not the time for that." },
+        { id:119,cat:'core', es:"Estoy tratando de concentrarme.", en:"I'm trying to focus." },
+        { id:120,cat:'core', es:"Cuanto antes, mejor.", en:"The sooner, the better." },
+    ];
+
+    const CAT_META = {
+        core:   { label: 'Core',    badgeClass: 'badge-core',   color: '#a89fff' },
+        bridge: { label: 'Puente',  badgeClass: 'badge-bridge', color: '#ff8fa3' },
+        energy: { label: 'Energía', badgeClass: 'badge-energy', color: '#ffc107' },
+        social: { label: 'Social',  badgeClass: 'badge-social', color: '#34d399' },
+    };
+
+    // ─── STATE ───────────────────────────────────────────────────────────────
+    let state = {
+        panel: 'card',
+        currentIndex: 0,
+        showAnswer: false,
+        isShuffled: false,
+        order: rawData.map((_, i) => i),
+        mastered: new Set(JSON.parse(localStorage.getItem('mastered') || '[]')),
+        sessionCount: 0,
+        listFilter: 'all',
+    };
+
+    // ─── PERSIST ─────────────────────────────────────────────────────────────
+    function saveMastered() {
+        localStorage.setItem('mastered', JSON.stringify([...state.mastered]));
+    }
+
+    // ─── PANELS ──────────────────────────────────────────────────────────────
+    function showPanel(p) {
+        state.panel = p;
+        ['card','list','stats'].forEach(v => {
+            document.getElementById('view-' + v).classList.toggle('hidden', v !== p);
+            document.getElementById('view-' + v).classList.toggle('flex', v === p);
+        });
+        ['card','list','stats'].forEach(v => {
+            document.getElementById('nav-' + v).classList.toggle('active', v === p);
+        });
+        if (p === 'stats') renderStats();
+        if (p === 'list') renderList();
+    }
+
+    // ─── CARD ─────────────────────────────────────────────────────────────────
+    function renderCard(dir) {
+        const d = rawData[state.order[state.currentIndex]];
+        const cardEl = document.getElementById('card-main');
+
+        // Animation
+        if (dir) {
+            const outClass = dir === 'next' ? 'anim-swipe-left' : 'anim-swipe-right';
+            const inClass  = dir === 'next' ? 'anim-in-right'   : 'anim-in-left';
+            cardEl.classList.add(outClass);
+            setTimeout(() => {
+                cardEl.classList.remove(outClass);
+                cardEl.classList.add(inClass);
+                setTimeout(() => cardEl.classList.remove(inClass), 250);
+                _updateCardContent(d);
+            }, 200);
+        } else {
+            _updateCardContent(d);
+        }
+
+        // Prev/Next buttons
+        document.getElementById('btn-prev').disabled = state.currentIndex === 0;
+        document.getElementById('btn-next').disabled = state.currentIndex === state.order.length - 1;
+    }
+
+    function _updateCardContent(d) {
+        const meta = CAT_META[d.cat];
+        document.getElementById('text-es').textContent = d.es;
+        document.getElementById('text-en').textContent = d.en;
+        document.getElementById('cat-label').textContent = meta.label;
+        document.getElementById('cat-label').className = 'badge ' + meta.badgeClass;
+
+        const total = getFilteredOrder().length || rawData.length;
+        document.getElementById('progress-text').textContent = `${state.currentIndex + 1} / ${total}`;
+        document.getElementById('progress-bar').style.width = `${((state.currentIndex + 1) / total) * 100}%`;
+
+        // Mastered
+        const isMastered = state.mastered.has(d.id);
+        const cardEl = document.getElementById('card-main');
+        cardEl.classList.toggle('mastered', isMastered);
+        const starBtn = document.getElementById('btn-star');
+        starBtn.classList.toggle('starred', isMastered);
+        starBtn.querySelector('i').setAttribute('fill', isMastered ? 'currentColor' : 'none');
+
+        state.showAnswer = false;
+        _updateAnswerUI();
+        updateHeaderLabel();
+    }
+
+    function _updateAnswerUI() {
+        const s = document.getElementById('answer-section');
+        const h = document.getElementById('tap-hint');
+        const cardEl = document.getElementById('card-main');
+        s.classList.toggle('hidden-answer', !state.showAnswer);
+        h.classList.toggle('hidden', state.showAnswer);
+        cardEl.classList.toggle('revealed', state.showAnswer);
+    }
+
+    function toggleAnswer() {
+        state.showAnswer = !state.showAnswer;
+        _updateAnswerUI();
+    }
+
+    function nextCard() {
+        if (state.currentIndex < state.order.length - 1) {
+            state.currentIndex++;
+            renderCard('next');
+        }
+    }
+
+    function prevCard() {
+        if (state.currentIndex > 0) {
+            state.currentIndex--;
+            renderCard('prev');
+        }
+    }
+
+    function markAndNext() {
+        const d = rawData[state.order[state.currentIndex]];
+        if (!state.mastered.has(d.id)) {
+            state.mastered.add(d.id);
+            state.sessionCount++;
+            saveMastered();
+        }
+        nextCard();
+    }
+
+    function toggleMastered() {
+        const d = rawData[state.order[state.currentIndex]];
+        if (state.mastered.has(d.id)) {
+            state.mastered.delete(d.id);
+        } else {
+            state.mastered.add(d.id);
+            state.sessionCount++;
+        }
+        saveMastered();
+        _updateCardContent(d);
+    }
+
+    function updateHeaderLabel() {
+        document.getElementById('total-label').textContent =
+            `${rawData.length} estructuras · ${state.mastered.size} dominadas`;
+    }
+
+    // ─── SHUFFLE ──────────────────────────────────────────────────────────────
+    function getFilteredOrder() {
+        return rawData.map((_, i) => i); // base — could add filter here
+    }
+
+    function toggleShuffle() {
+        state.currentIndex = 0; state.showAnswer = false;
+        if (state.isShuffled) {
+            state.order = rawData.map((_, i) => i);
+        } else {
+            state.order = [...state.order].sort(() => Math.random() - 0.5);
+        }
+        state.isShuffled = !state.isShuffled;
+        const icon = document.getElementById('shuffle-icon');
+        icon.style.color = state.isShuffled ? 'var(--accent)' : 'var(--muted)';
+        renderCard();
+    }
+
+    // ─── LIST ─────────────────────────────────────────────────────────────────
+    function setFilter(f, el) {
+        state.listFilter = f;
+        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active-pill'));
+        el.classList.add('active-pill');
+        renderList();
+    }
+
+    function renderList() {
+        const q = (document.getElementById('search-input').value || '').toLowerCase();
+        let items = rawData;
+        if (state.listFilter !== 'all') {
+            if (state.listFilter === 'mastered') items = items.filter(i => state.mastered.has(i.id));
+            else items = items.filter(i => i.cat === state.listFilter);
+        }
+        if (q) items = items.filter(i => i.es.toLowerCase().includes(q) || i.en.toLowerCase().includes(q));
+        document.getElementById('list-body').innerHTML = items.map(i => {
+            const meta = CAT_META[i.cat];
+            const isMastered = state.mastered.has(i.id);
+            return `<div class="list-item px-4 py-3 flex items-center gap-3" onclick="speakText('${i.en.replace(/'/g,"\\'")}')">
+                <span class="text-xs font-mono w-6 shrink-0 text-right" style="color:var(--muted)">${i.id}</span>
+                <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-sm truncate" style="color:var(--text)">${i.es}</div>
+                    <div class="text-xs truncate mt-0.5" style="color:${meta.color}">${i.en}</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <span class="badge ${meta.badgeClass}">${meta.label}</span>
+                    ${isMastered ? '<i data-lucide="star" class="w-3.5 h-3.5" style="color:#ffc107;fill:currentColor"></i>' : ''}
+                </div>
+            </div>`;
+        }).join('');
+        
+        // Safety check para renderizar iconos en elementos generados dinámicamente
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    }
+
+    // ─── STATS ────────────────────────────────────────────────────────────────
+    function renderStats() {
+        const m = state.mastered.size;
+        const total = rawData.length;
+        document.getElementById('stat-mastered').textContent = m;
+        document.getElementById('stat-remaining').textContent = total - m;
+        document.getElementById('stat-pct').textContent = Math.round(m / total * 100) + '%';
+        document.getElementById('stat-session').textContent = state.sessionCount;
+
+        // By category
+        const cats = ['core','bridge','energy','social'];
+        document.getElementById('cat-breakdown').innerHTML = cats.map(c => {
+            const items = rawData.filter(i => i.cat === c);
+            const done  = items.filter(i => state.mastered.has(i.id)).length;
+            const pct   = Math.round(done / items.length * 100);
+            const meta  = CAT_META[c];
+            return `<div>
+                <div class="flex justify-between text-xs mb-1">
+                    <span class="font-semibold" style="color:${meta.color}">${meta.label}</span>
+                    <span style="color:var(--muted)">${done}/${items.length}</span>
+                </div>
+                <div class="h-1.5 rounded-full overflow-hidden" style="background:var(--dark)">
+                    <div class="h-full rounded-full transition-all" style="width:${pct}%;background:${meta.color}"></div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function resetProgress() {
+        if (!confirm('¿Resetear todo el progreso?')) return;
+        state.mastered.clear();
+        state.sessionCount = 0;
+        saveMastered();
+        renderStats();
+        updateHeaderLabel();
+        renderCard();
+    }
+
+    // ─── SPEECH ───────────────────────────────────────────────────────────────
+    function speakText(t) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = 'en-US'; u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+    }
+    function speakCurrent() { speakText(rawData[state.order[state.currentIndex]].en); }
+
+    // ─── SWIPE ────────────────────────────────────────────────────────────────
+    let touchStartX = 0, touchStartY = 0;
+    document.getElementById('card-main').addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.getElementById('card-main').addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+            if (dx < 0) nextCard(); else prevCard();
+        }
+    }, { passive: true });
+
+    // ─── INIT ─────────────────────────────────────────────────────────────────
+    window.onload = () => {
+        // Safety check inicial
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+        showPanel('card');
+        renderCard();
+        renderList();
+    };
+    </script>
+</body>
+</html>
