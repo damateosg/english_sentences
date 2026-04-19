@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Masa Crítica 3.0</title>
+    <title>Masa Crítica 2.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
     
     <style>
@@ -33,10 +35,12 @@
         .no-select { user-select: none; -webkit-user-select: none; }
         .touch-action { touch-action: manipulation; }
 
+        /* Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 10px; }
 
+        /* Card glow */
         .card-main {
             background: var(--card-bg);
             border: 1px solid rgba(108,99,255,0.15);
@@ -48,6 +52,7 @@
             border-color: rgba(108,99,255,0.3);
         }
 
+        /* Answer reveal */
         #answer-section {
             transition: opacity 0.35s ease, transform 0.35s ease;
         }
@@ -57,6 +62,7 @@
             pointer-events: none;
         }
 
+        /* Category badges */
         .badge {
             display: inline-block;
             padding: 2px 10px;
@@ -66,12 +72,12 @@
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
-        .badge-unlock  { background: rgba(251,146,60,0.2);  color: #fb923c; }
-        .badge-core    { background: rgba(108,99,255,0.18); color: #a89fff; }
-        .badge-bridge  { background: rgba(255,101,132,0.18);color: #ff8fa3; }
-        .badge-react   { background: rgba(255,193,7,0.15);  color: #ffc107; }
-        .badge-social  { background: rgba(52,211,153,0.15); color: #34d399; }
+        .badge-core { background: rgba(108,99,255,0.18); color: #a89fff; }
+        .badge-bridge { background: rgba(255,101,132,0.18); color: #ff8fa3; }
+        .badge-energy { background: rgba(255,193,7,0.15); color: #ffc107; }
+        .badge-social { background: rgba(52,211,153,0.15); color: #34d399; }
 
+        /* Mastered overlay */
         .mastered-overlay {
             position: absolute; inset: 0; border-radius: inherit;
             background: rgba(52,211,153,0.08);
@@ -80,6 +86,7 @@
         }
         .card-main.mastered .mastered-overlay { opacity: 1; }
 
+        /* Bottom nav */
         .nav-btn {
             flex: 1;
             display: flex;
@@ -96,11 +103,13 @@
         }
         .nav-btn.active { color: var(--accent); background: rgba(108,99,255,0.12); }
 
+        /* Progress bar */
         #progress-bar {
             background: linear-gradient(90deg, var(--accent), var(--accent2));
             transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
         }
 
+        /* Buttons */
         .btn-next {
             background: linear-gradient(135deg, var(--accent), #8B7CF8);
             box-shadow: 0 4px 20px rgba(108,99,255,0.4);
@@ -115,10 +124,12 @@
         }
         .btn-secondary:active { background: #2d2848; transform: scale(0.96); }
 
+        /* Star button */
         .btn-star { transition: transform 0.2s, color 0.2s; }
         .btn-star:active { transform: scale(0.85); }
         .btn-star.starred { color: #ffc107; }
 
+        /* List items */
         .list-item {
             border-bottom: 1px solid rgba(255,255,255,0.04);
             transition: background 0.15s;
@@ -126,6 +137,7 @@
         }
         .list-item:active { background: rgba(108,99,255,0.08); }
 
+        /* Stats */
         .stat-card {
             background: var(--surface);
             border: 1px solid rgba(255,255,255,0.05);
@@ -133,9 +145,11 @@
             padding: 16px;
         }
 
+        /* Hint pulse */
         @keyframes pulse-hint { 0%,100% { opacity: 0.3; } 50% { opacity: 0.7; } }
         #tap-hint { animation: pulse-hint 2s ease-in-out infinite; }
 
+        /* Category filter pills */
         .filter-pill {
             padding: 6px 14px;
             border-radius: 999px;
@@ -154,14 +168,15 @@
             color: #c5c0ff;
         }
 
-        @keyframes swipe-left  { from { transform: translateX(0);    opacity: 1; } to { transform: translateX(-60px); opacity: 0; } }
-        @keyframes swipe-right { from { transform: translateX(0);    opacity: 1; } to { transform: translateX(60px);  opacity: 0; } }
-        @keyframes slide-in-right { from { transform: translateX(40px);  opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slide-in-left  { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .anim-swipe-left  { animation: swipe-left   0.2s ease forwards; }
-        .anim-swipe-right { animation: swipe-right  0.2s ease forwards; }
-        .anim-in-right    { animation: slide-in-right 0.25s ease forwards; }
-        .anim-in-left     { animation: slide-in-left  0.25s ease forwards; }
+        /* Swipe animation */
+        @keyframes swipe-left { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-60px); opacity: 0; } }
+        @keyframes swipe-right { from { transform: translateX(0); opacity: 1; } to { transform: translateX(60px); opacity: 0; } }
+        @keyframes slide-in-right { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slide-in-left { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .anim-swipe-left { animation: swipe-left 0.2s ease forwards; }
+        .anim-swipe-right { animation: swipe-right 0.2s ease forwards; }
+        .anim-in-right { animation: slide-in-right 0.25s ease forwards; }
+        .anim-in-left { animation: slide-in-left 0.25s ease forwards; }
 
         input::placeholder { color: var(--muted); opacity: 0.6; }
         input { caret-color: var(--accent); }
@@ -172,7 +187,7 @@
     <header class="shrink-0 px-4 py-3 flex items-center justify-between" style="padding-top: calc(0.75rem + env(safe-area-inset-top))">
         <div>
             <h1 class="font-display text-lg font-bold tracking-tight" style="color: var(--text)">Masa Crítica</h1>
-            <p class="text-xs font-medium" style="color: var(--muted)" id="total-label">160 estructuras · 0 dominadas</p>
+            <p class="text-xs font-medium" style="color: var(--muted)" id="total-label">120 estructuras · 0 dominadas</p>
         </div>
         <div class="flex items-center gap-2">
             <button onclick="showPanel('stats')" id="hdr-stats" class="p-2 rounded-xl btn-secondary">
@@ -187,10 +202,11 @@
     <main class="flex-1 overflow-hidden flex flex-col px-4 pb-2" style="min-height:0">
 
         <div id="view-card" class="flex flex-col h-full">
+
             <div class="mb-3 shrink-0">
                 <div class="flex justify-between text-xs mb-1.5 font-semibold" style="color: var(--muted)">
-                    <span id="progress-text">1 / 160</span>
-                    <span id="cat-label" class="badge badge-unlock">Desbloqueo</span>
+                    <span id="progress-text">1 / 120</span>
+                    <span id="cat-label" class="badge badge-core">Core</span>
                 </div>
                 <div class="h-1 rounded-full overflow-hidden" style="background: var(--surface)">
                     <div id="progress-bar" class="h-full rounded-full" style="width: 1%"></div>
@@ -199,13 +215,17 @@
 
             <div id="card-main" class="card-main rounded-3xl flex-1 flex flex-col relative mb-4 min-h-0 overflow-hidden no-select touch-action" onclick="toggleAnswer()">
                 <div class="mastered-overlay"></div>
+
                 <button onclick="event.stopPropagation(); toggleMastered()" id="btn-star" class="btn-star absolute top-3 right-3 z-10 p-2.5 rounded-full" style="color: var(--muted)">
                     <i data-lucide="star" class="w-5 h-5"></i>
                 </button>
+
                 <div class="flex-1 flex flex-col items-center justify-center p-6 text-center overflow-y-auto custom-scrollbar">
-                    <span class="badge badge-unlock mb-4" id="badge-es">Español</span>
+                    <span class="badge badge-core mb-4" id="badge-es">Español</span>
                     <h2 id="text-es" class="font-display text-2xl md:text-3xl font-bold leading-tight mb-2" style="color: var(--text)">Cargando...</h2>
+
                     <div class="w-12 h-px my-4 rounded-full" style="background: rgba(255,255,255,0.08)"></div>
+
                     <div id="answer-section" class="hidden-answer w-full">
                         <span class="badge mb-4" style="background:rgba(108,99,255,0.18);color:#a89fff">English</span>
                         <h3 id="text-en" class="font-display text-xl md:text-2xl font-bold leading-tight mb-5" style="color: #a89fff">Loading...</h3>
@@ -213,6 +233,7 @@
                             <i data-lucide="volume-2" class="w-4 h-4"></i> Escuchar
                         </button>
                     </div>
+
                     <p id="tap-hint" class="absolute bottom-5 text-xs font-bold uppercase tracking-widest" style="color: var(--muted)">Toca para revelar</p>
                 </div>
             </div>
@@ -238,10 +259,9 @@
             </div>
             <div class="flex gap-2 overflow-x-auto shrink-0 mb-3 pb-1 custom-scrollbar" style="scrollbar-width:none">
                 <button class="filter-pill active-pill" onclick="setFilter('all', this)">Todas</button>
-                <button class="filter-pill" onclick="setFilter('unlock', this)">🔓 Desbloqueo</button>
                 <button class="filter-pill" onclick="setFilter('core', this)">Core</button>
                 <button class="filter-pill" onclick="setFilter('bridge', this)">Puente</button>
-                <button class="filter-pill" onclick="setFilter('react', this)">Reacción</button>
+                <button class="filter-pill" onclick="setFilter('energy', this)">Energía</button>
                 <button class="filter-pill" onclick="setFilter('social', this)">Social</button>
                 <button class="filter-pill" onclick="setFilter('mastered', this)">★ Dominadas</button>
             </div>
@@ -258,7 +278,7 @@
                     <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Dominadas</div>
                 </div>
                 <div class="stat-card text-center">
-                    <div class="font-display text-3xl font-bold" id="stat-remaining" style="color:var(--accent)">160</div>
+                    <div class="font-display text-3xl font-bold" id="stat-remaining" style="color:var(--accent)">120</div>
                     <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Por dominar</div>
                 </div>
                 <div class="stat-card text-center">
@@ -270,10 +290,12 @@
                     <div class="text-xs mt-1 font-medium" style="color:var(--muted)">Esta sesión</div>
                 </div>
             </div>
+
             <div class="stat-card shrink-0">
                 <p class="text-xs font-bold uppercase tracking-wider mb-3" style="color:var(--muted)">Por categoría</p>
                 <div id="cat-breakdown" class="space-y-3"></div>
             </div>
+
             <button onclick="resetProgress()" class="btn-secondary py-3 rounded-2xl text-sm font-semibold shrink-0" style="color:var(--accent2)">
                 Reiniciar progreso
             </button>
@@ -296,217 +318,164 @@
     </nav>
 
     <script>
-    // ─── DATA ────────────────────────────────────────────────────────────────────
-    // 160 frases organizadas en 5 categorías con criterio de frecuencia real y
-    // utilidad específica para el desbloqueo conversacional.
-    //
-    // UNLOCK  (30) — ganar tiempo cuando el cerebro se congela. PRIORIDAD MÁXIMA.
-    // CORE    (55) — estructuras de altísima frecuencia, traducciones naturales.
-    // BRIDGE  (25) — conectar y gestionar el flujo de conversación.
-    // REACT   (25) — reacciones espontáneas que salen sin procesar.
-    // SOCIAL  (25) — apertura, cierre y gestión social de alta frecuencia real.
-
+    // ─── DATA ────────────────────────────────────────────────────────────────
     const rawData = [
+        // CORE (original 30 from the system prompt + app originals)
+        { id:1,  cat:'core', es:"Me pongo nervioso antes de las reuniones.", en:"I get nervous before meetings." },
+        { id:2,  cat:'core', es:"Él vive aquí, ¿verdad?", en:"He lives here, doesn't he?" },
+        { id:3,  cat:'core', es:"¿Qué harías si fueras el jefe?", en:"What would you do if you were the boss?" },
+        { id:4,  cat:'core', es:"¿Dónde está?", en:"Where is it?" },
+        { id:5,  cat:'core', es:"Esa es la mujer que me llamó.", en:"That's the woman who called me." },
+        { id:6,  cat:'core', es:"¿De dónde eres?", en:"Where are you from?" },
+        { id:7,  cat:'core', es:"Hicimos que ellos lo hicieran.", en:"We made them do it." },
+        { id:8,  cat:'core', es:"Yo solía fumar mucho.", en:"I used to smoke a lot." },
+        { id:9,  cat:'core', es:"Él no habla tanto como tú.", en:"He doesn't talk as much as you do." },
+        { id:10, cat:'core', es:"¿Por qué no dices algo?", en:"Why don't you say something?" },
+        { id:11, cat:'core', es:"Casi nunca como pan.", en:"I hardly ever eat bread." },
+        { id:12, cat:'core', es:"¿A qué hora sale el avión?", en:"What time does the plane leave?" },
+        { id:13, cat:'core', es:"Da igual.", en:"It doesn't matter." },
+        { id:14, cat:'core', es:"Me duele el hombro.", en:"My shoulder hurts." },
+        { id:15, cat:'core', es:"Estaba a punto de llamarte.", en:"I was about to call you." },
+        { id:16, cat:'core', es:"Se me olvidó hacerlo.", en:"I forgot to do it." },
+        { id:17, cat:'core', es:"Depende de lo que quieras.", en:"It depends on what you want." },
+        { id:18, cat:'core', es:"No tiene sentido.", en:"It doesn't make sense." },
+        { id:19, cat:'core', es:"Ya me encargo yo.", en:"I'll take care of it." },
+        { id:20, cat:'core', es:"Lo haré luego.", en:"I'll do it later." },
+        { id:21, cat:'core', es:"¿Qué quieres decir exactamente?", en:"What do you mean exactly?" },
+        { id:22, cat:'core', es:"No estoy seguro de eso.", en:"I'm not sure about that." },
+        { id:23, cat:'core', es:"Pensé que ya lo sabías.", en:"I thought you already knew." },
+        { id:24, cat:'core', es:"No me di cuenta.", en:"I didn't realize." },
+        { id:25, cat:'core', es:"Al final no fui.", en:"I didn't end up going." },
+        { id:26, cat:'core', es:"Sigo pensando lo mismo.", en:"I still think the same." },
+        { id:27, cat:'core', es:"No merece la pena.", en:"It's not worth it." },
+        { id:28, cat:'core', es:"Es mejor así.", en:"It's better this way." },
+        { id:29, cat:'core', es:"¿Te importa si…?", en:"Do you mind if…?" },
+        { id:30, cat:'core', es:"No tengo ganas de…", en:"I don't feel like…" },
+        { id:31, cat:'core', es:"Acabo de hacerlo.", en:"I just did it." },
+        { id:32, cat:'core', es:"Llevo tiempo pensando en eso.", en:"I've been thinking about that for a while." },
+        { id:33, cat:'core', es:"No es para tanto.", en:"It's not a big deal." },
+        { id:34, cat:'core', es:"Tiene buena pinta.", en:"It looks good." },
+        { id:35, cat:'core', es:"No tengo ni idea.", en:"I have no idea." },
+        { id:36, cat:'core', es:"Eso suena bien.", en:"That sounds good." },
+        { id:37, cat:'core', es:"Estoy de acuerdo contigo.", en:"I agree with you." },
+        { id:38, cat:'core', es:"No estoy de acuerdo.", en:"I don't agree." },
+        { id:39, cat:'core', es:"Depende de cómo lo mires.", en:"It depends on how you look at it." },
+        { id:40, cat:'core', es:"Iba a decírtelo.", en:"I was going to tell you." },
+        { id:41, cat:'core', es:"No es lo que esperaba.", en:"It's not what I expected." },
+        { id:42, cat:'core', es:"Todo salió bien.", en:"Everything went well." },
+        { id:43, cat:'core', es:"Deberías tener más cuidado.", en:"You should be more careful." },
+        { id:44, cat:'core', es:"No puedo evitarlo.", en:"I can't help it." },
+        { id:45, cat:'core', es:"Depende de ti.", en:"It depends on you." },
+        { id:46, cat:'core', es:"Estoy buscando mis llaves.", en:"I'm looking for my keys." },
+        { id:47, cat:'core', es:"¿Te importa que yo fume?", en:"Do you mind if I smoke?" },
+        { id:48, cat:'core', es:"Nadie me dijo nada.", en:"Nobody told me anything." },
+        { id:49, cat:'core', es:"¿Puedo pedirte un favor?", en:"Can I ask you a favor?" },
+        { id:50, cat:'core', es:"No me importa en absoluto.", en:"I don't mind at all." },
+        { id:51, cat:'core', es:"Llovía cuando salimos.", en:"It was raining when we left." },
+        { id:52, cat:'core', es:"¿Cuándo estará listo?", en:"When will it be ready?" },
+        { id:53, cat:'core', es:"Llevo dos años aquí.", en:"I have been here for two years." },
+        { id:54, cat:'core', es:"Se tarda mucho en aprender inglés.", en:"It takes a long time to learn English." },
+        { id:55, cat:'core', es:"¿Cómo lo ves?", en:"What do you think about it?" },
 
-        // ── UNLOCK ── ganar tiempo / recuperarse del bloqueo ──────────────────
-        // Estas frases tienen un único objetivo: que nunca te quedes en silencio.
-        // Apréndelas primero. Son tu red de seguridad.
-        { id:1,  cat:'unlock', es:"Espera, déjame pensarlo.",           en:"Wait, let me think." },
-        { id:2,  cat:'unlock', es:"¿Cómo se dice…?",                    en:"How do you say…?" },
-        { id:3,  cat:'unlock', es:"No sé exactamente cómo decirlo.",    en:"I'm not sure how to put it." },
-        { id:4,  cat:'unlock', es:"Perdona, me he liado.",              en:"Sorry, I got confused." },
-        { id:5,  cat:'unlock', es:"Déjame empezar de nuevo.",           en:"Let me start over." },
-        { id:6,  cat:'unlock', es:"¿Sabes lo que quiero decir?",        en:"You know what I mean?" },
-        { id:7,  cat:'unlock', es:"Lo que intento decir es…",           en:"What I'm trying to say is…" },
-        { id:8,  cat:'unlock', es:"Es difícil de explicar.",            en:"It's hard to explain." },
-        { id:9,  cat:'unlock', es:"No me sale la palabra.",             en:"I can't think of the word." },
-        { id:10, cat:'unlock', es:"Algo así, más o menos.",             en:"Something like that." },
-        { id:11, cat:'unlock', es:"No es exactamente eso, pero…",       en:"Not exactly, but…" },
-        { id:12, cat:'unlock', es:"Eso no me salió bien.",              en:"That came out wrong." },
-        { id:13, cat:'unlock', es:"Quiero decir…",                      en:"I mean…" },
-        { id:14, cat:'unlock', es:"A ver cómo lo explico.",             en:"Let me see how to explain this." },
-        { id:15, cat:'unlock', es:"Dame un segundo.",                   en:"Give me a second." },
-        { id:16, cat:'unlock', es:"Buena pregunta.",                    en:"That's a good question." },
-        { id:17, cat:'unlock', es:"Nunca lo había pensado así.",        en:"I've never thought about it that way." },
-        { id:18, cat:'unlock', es:"Interesante. Déjame pensar.",        en:"Interesting. Let me think." },
-        { id:19, cat:'unlock', es:"¿Puedes repetir eso?",              en:"Could you say that again?" },
-        { id:20, cat:'unlock', es:"¿Puedes hablar más despacio?",       en:"Could you speak more slowly?" },
-        { id:21, cat:'unlock', es:"No te he entendido bien.",           en:"I didn't quite catch that." },
-        { id:22, cat:'unlock', es:"¿Qué quieres decir exactamente?",   en:"What do you mean exactly?" },
-        { id:23, cat:'unlock', es:"Si no me equivoco…",                 en:"If I'm not mistaken…" },
-        { id:24, cat:'unlock', es:"Puede que me equivoque, pero…",      en:"I might be wrong, but…" },
-        { id:25, cat:'unlock', es:"No estoy seguro, pero creo que…",   en:"I'm not sure, but I think…" },
-        { id:26, cat:'unlock', es:"Lo diré de otra manera.",            en:"Let me put it another way." },
-        { id:27, cat:'unlock', es:"Es una especie de…",                 en:"It's kind of like…" },
-        { id:28, cat:'unlock', es:"¿Tiene sentido lo que digo?",        en:"Does that make sense?" },
-        { id:29, cat:'unlock', es:"Estoy intentando encontrar la palabra.", en:"I'm trying to find the word." },
-        { id:30, cat:'unlock', es:"En fin, lo que quería decir era…",  en:"Anyway, what I meant was…" },
+        // BRIDGE — frases puente para gestionar la conversación
+        { id:56, cat:'bridge', es:"Lo que quiero decir es…", en:"What I mean is…" },
+        { id:57, cat:'bridge', es:"¿Cómo lo digo…?", en:"How can I put this…?" },
+        { id:58, cat:'bridge', es:"Espera un momento.", en:"Hang on a second." },
+        { id:59, cat:'bridge', es:"Déjame pensarlo.", en:"Let me think about that." },
+        { id:60, cat:'bridge', es:"Volviendo a lo que decías…", en:"Going back to what you said…" },
+        { id:61, cat:'bridge', es:"Por lo que entiendo…", en:"As far as I understand…" },
+        { id:62, cat:'bridge', es:"En otras palabras…", en:"In other words…" },
+        { id:63, cat:'bridge', es:"Eso me recuerda que…", en:"That reminds me…" },
+        { id:64, cat:'bridge', es:"A propósito…", en:"By the way…" },
+        { id:65, cat:'bridge', es:"Dicho esto…", en:"That said…" },
+        { id:66, cat:'bridge', es:"No estaba pensando en eso.", en:"I wasn't thinking about that." },
+        { id:67, cat:'bridge', es:"Tiene sentido lo que dices.", en:"That makes sense." },
+        { id:68, cat:'bridge', es:"Es difícil de explicar.", en:"It's hard to explain." },
+        { id:69, cat:'bridge', es:"Ya sé a qué te refieres.", en:"I know what you mean." },
+        { id:70, cat:'bridge', es:"No lo había visto así.", en:"I hadn't thought of it that way." },
 
-        // ── CORE ── estructuras de máxima frecuencia ──────────────────────────
-        { id:31, cat:'core', es:"No tengo ni idea.",                    en:"I have no idea." },
-        { id:32, cat:'core', es:"Da igual.",                            en:"It doesn't matter." },
-        { id:33, cat:'core', es:"No merece la pena.",                   en:"It's not worth it." },
-        { id:34, cat:'core', es:"Depende de lo que quieras.",           en:"It depends on what you want." },
-        { id:35, cat:'core', es:"No me importa en absoluto.",           en:"I don't mind at all." },
-        { id:36, cat:'core', es:"No tiene sentido.",                    en:"It doesn't make sense." },
-        { id:37, cat:'core', es:"Tiene todo el sentido.",               en:"That makes total sense." },
-        { id:38, cat:'core', es:"No es para tanto.",                    en:"It's not a big deal." },
-        { id:39, cat:'core', es:"Es mejor así.",                        en:"It's better this way." },
-        { id:40, cat:'core', es:"Tiene buena pinta.",                   en:"It looks good." },
-        { id:41, cat:'core', es:"Eso suena bien.",                      en:"That sounds good." },
-        { id:42, cat:'core', es:"Yo me encargo.",                       en:"I'll take care of it." },
-        { id:43, cat:'core', es:"Lo haré luego.",                       en:"I'll do it later." },
-        { id:44, cat:'core', es:"No estoy seguro de eso.",              en:"I'm not sure about that." },
-        { id:45, cat:'core', es:"Pensé que ya lo sabías.",              en:"I thought you already knew." },
-        { id:46, cat:'core', es:"No me di cuenta.",                     en:"I didn't realize." },
-        { id:47, cat:'core', es:"Se me fue de la cabeza.",              en:"It slipped my mind." },
-        { id:48, cat:'core', es:"No puedo evitarlo.",                   en:"I can't help it." },
-        { id:49, cat:'core', es:"Sigo pensando lo mismo.",              en:"I still feel the same way." },
-        { id:50, cat:'core', es:"Todo salió bien.",                     en:"Everything went well." },
-        { id:51, cat:'core', es:"Al final no fui.",                     en:"I ended up not going." },
-        { id:52, cat:'core', es:"Estaba a punto de llamarte.",          en:"I was about to call you." },
-        { id:53, cat:'core', es:"Iba a decírtelo.",                     en:"I was going to tell you." },
-        { id:54, cat:'core', es:"Nadie me dijo nada.",                  en:"Nobody told me anything." },
-        { id:55, cat:'core', es:"Se me olvidó hacerlo.",                en:"I forgot to do it." },
-        { id:56, cat:'core', es:"Llevo tiempo pensando en eso.",        en:"I've been thinking about that for a while." },
-        { id:57, cat:'core', es:"Yo solía hacerlo así.",                en:"I used to do it that way." },
-        { id:58, cat:'core', es:"Hicimos que ellos lo hicieran.",       en:"We made them do it." },
-        { id:59, cat:'core', es:"¿Qué harías si fueras el jefe?",       en:"What would you do if you were the boss?" },
-        { id:60, cat:'core', es:"Él no habla tanto como tú.",           en:"He doesn't talk as much as you do." },
-        { id:61, cat:'core', es:"Casi nunca como pan.",                 en:"I hardly ever eat bread." },
-        { id:62, cat:'core', es:"Llovía cuando salimos.",               en:"It was raining when we left." },
-        { id:63, cat:'core', es:"Llevo dos años aquí.",                 en:"I've been here for two years." },
-        { id:64, cat:'core', es:"Se tarda mucho en aprender inglés.",   en:"It takes a long time to learn English." },
-        { id:65, cat:'core', es:"No es lo que esperaba.",               en:"It's not what I expected." },
-        { id:66, cat:'core', es:"¿Te importa si…?",                     en:"Do you mind if…?" },
-        { id:67, cat:'core', es:"No tengo ganas de…",                   en:"I don't feel like…" },
-        { id:68, cat:'core', es:"Ya casi está.",                        en:"It's almost done." },
-        { id:69, cat:'core', es:"Ya era hora.",                         en:"It's about time." },
-        { id:70, cat:'core', es:"Vamos a ver.",                         en:"Let's see." },
-        { id:71, cat:'core', es:"Podría ser.",                          en:"Could be." },
-        { id:72, cat:'core', es:"Lo dudo.",                             en:"I doubt it." },
-        { id:73, cat:'core', es:"¿Tienes un momento?",                  en:"Do you have a minute?" },
-        { id:74, cat:'core', es:"¿Qué está pasando?",                   en:"What's going on?" },
-        { id:75, cat:'core', es:"¿Me estás tomando el pelo?",           en:"Are you kidding me?" },
-        { id:76, cat:'core', es:"¿Qué se supone que significa eso?",    en:"What's that supposed to mean?" },
-        { id:77, cat:'core', es:"No es culpa mía.",                     en:"It's not my fault." },
-        { id:78, cat:'core', es:"Cuanto antes, mejor.",                 en:"The sooner, the better." },
-        { id:79, cat:'core', es:"No es exactamente lo que buscaba.",    en:"That's not exactly what I was looking for." },
-        { id:80, cat:'core', es:"Deberías tener más cuidado.",          en:"You should be more careful." },
-        { id:81, cat:'core', es:"¿Puedo pedirte un favor?",             en:"Can I ask you a favor?" },
-        { id:82, cat:'core', es:"Eso me lo imaginaba.",                 en:"I figured as much." },
-        { id:83, cat:'core', es:"Más o menos.",                         en:"More or less." },
-        { id:84, cat:'core', es:"Por supuesto.",                        en:"Of course." },
-        { id:85, cat:'core', es:"En absoluto.",                         en:"Not at all." },
+        // ENERGY — frases de alta energía, urgencia, reacción
+        { id:71, cat:'energy', es:"¡En serio!", en:"I'm serious!" },
+        { id:72, cat:'energy', es:"¡Venga ya!", en:"Come on!" },
+        { id:73, cat:'energy', es:"Eso es culpa mía.", en:"That's on me." },
+        { id:74, cat:'energy', es:"¡Ni hablar!", en:"No way!" },
+        { id:75, cat:'energy', es:"¡Qué fuerte!", en:"That's wild!" },
+        { id:76, cat:'energy', es:"¡Exacto!", en:"Exactly!" },
+        { id:77, cat:'energy', es:"¡Lo sabía!", en:"I knew it!" },
+        { id:78, cat:'energy', es:"¡Date prisa!", en:"Hurry up!" },
+        { id:79, cat:'energy', es:"¡Suéltalo ya!", en:"Just say it!" },
+        { id:80, cat:'energy', es:"¡Me alegra oír eso!", en:"Glad to hear it!" },
+        { id:81, cat:'energy', es:"¡Eso fue increíble!", en:"That was amazing!" },
+        { id:82, cat:'energy', es:"¿Hablas en serio?", en:"Are you serious?" },
+        { id:83, cat:'energy', es:"No me lo esperaba.", en:"I didn't see that coming." },
+        { id:84, cat:'energy', es:"Cálmate.", en:"Take it easy." },
+        { id:85, cat:'energy', es:"¡Vamos!", en:"Let's go!" },
 
-        // ── BRIDGE ── gestionar el flujo de conversación ──────────────────────
-        { id:86, cat:'bridge', es:"Lo que quiero decir es…",            en:"What I mean is…" },
-        { id:87, cat:'bridge', es:"¿Cómo lo digo…?",                    en:"How can I put this…?" },
-        { id:88, cat:'bridge', es:"Espera un momento.",                  en:"Hang on a second." },
-        { id:89, cat:'bridge', es:"Déjame pensarlo.",                    en:"Let me think about that." },
-        { id:90, cat:'bridge', es:"Volviendo a lo que decías…",          en:"Going back to what you said…" },
-        { id:91, cat:'bridge', es:"Por lo que entiendo…",                en:"As far as I understand…" },
-        { id:92, cat:'bridge', es:"En otras palabras…",                  en:"In other words…" },
-        { id:93, cat:'bridge', es:"Eso me recuerda que…",                en:"That reminds me…" },
-        { id:94, cat:'bridge', es:"A propósito…",                        en:"By the way…" },
-        { id:95, cat:'bridge', es:"Dicho esto…",                         en:"That said…" },
-        { id:96, cat:'bridge', es:"Ya sé a qué te refieres.",            en:"I know what you mean." },
-        { id:97, cat:'bridge', es:"No lo había visto así.",              en:"I hadn't thought of it that way." },
-        { id:98, cat:'bridge', es:"Tiene sentido lo que dices.",         en:"That makes sense." },
-        { id:99, cat:'bridge', es:"Cambiando de tema…",                  en:"Changing the subject…" },
-        { id:100,cat:'bridge', es:"Para ser honesto…",                   en:"To be honest…" },
-        { id:101,cat:'bridge', es:"Mira, lo que pasa es que…",           en:"Look, the thing is…" },
-        { id:102,cat:'bridge', es:"Antes de continuar…",                 en:"Before we go on…" },
-        { id:103,cat:'bridge', es:"De hecho…",                           en:"Actually…" },
-        { id:104,cat:'bridge', es:"Por cierto…",                         en:"By the way…" },
-        { id:105,cat:'bridge', es:"Al fin y al cabo…",                   en:"At the end of the day…" },
-        { id:106,cat:'bridge', es:"No exactamente, pero sí que…",        en:"Not exactly, but…" },
-        { id:107,cat:'bridge', es:"Lo que me llama la atención es…",     en:"What strikes me is…" },
-        { id:108,cat:'bridge', es:"En mi opinión…",                      en:"In my opinion…" },
-        { id:109,cat:'bridge', es:"Desde mi punto de vista…",            en:"From my point of view…" },
-        { id:110,cat:'bridge', es:"Y eso sin mencionar que…",            en:"Not to mention that…" },
+        // SOCIAL — abrir, cerrar, cambiar de tema
+        { id:86, cat:'social', es:"¿Cómo te va?", en:"How's it going?" },
+        { id:87, cat:'social', es:"¿Qué hay de nuevo?", en:"What's new?" },
+        { id:88, cat:'social', es:"Ha sido un placer.", en:"It's been a pleasure." },
+        { id:89, cat:'social', es:"Nos vemos luego.", en:"See you later." },
+        { id:90, cat:'social', es:"Mantente en contacto.", en:"Stay in touch." },
+        { id:91, cat:'social', es:"¿Puedo preguntarte algo?", en:"Can I ask you something?" },
+        { id:92, cat:'social', es:"Cambiando de tema…", en:"Changing the subject…" },
+        { id:93, cat:'social', es:"¿Has tenido noticias de él?", en:"Have you heard from him?" },
+        { id:94, cat:'social', es:"¿Cómo está tu familia?", en:"How's your family doing?" },
+        { id:95, cat:'social', es:"No quiero molestarte.", en:"I don't want to bother you." },
+        { id:96, cat:'social', es:"Te lo agradezco mucho.", en:"I really appreciate it." },
+        { id:97, cat:'social', es:"No te preocupes por eso.", en:"Don't worry about it." },
+        { id:98, cat:'social', es:"¿Qué tal te fue?", en:"How did it go?" },
+        { id:99, cat:'social', es:"Te lo juro.", en:"I swear." },
+        { id:100,cat:'social', es:"Cuéntame más.", en:"Tell me more." },
 
-        // ── REACT ── reacciones que salen sin pensar ──────────────────────────
-        { id:111,cat:'react', es:"¡En serio!",                           en:"Seriously!" },
-        { id:112,cat:'react', es:"¡Venga ya!",                           en:"Come on!" },
-        { id:113,cat:'react', es:"¡Ni hablar!",                          en:"No way!" },
-        { id:114,cat:'react', es:"¡Exacto!",                             en:"Exactly!" },
-        { id:115,cat:'react', es:"¡Lo sabía!",                           en:"I knew it!" },
-        { id:116,cat:'react', es:"¡Qué fuerte!",                         en:"That's wild!" },
-        { id:117,cat:'react', es:"¡Date prisa!",                         en:"Hurry up!" },
-        { id:118,cat:'react', es:"¡Me alegra oír eso!",                  en:"Glad to hear it!" },
-        { id:119,cat:'react', es:"¡Eso fue increíble!",                  en:"That was amazing!" },
-        { id:120,cat:'react', es:"¿Hablas en serio?",                    en:"Are you serious?" },
-        { id:121,cat:'react', es:"No me lo esperaba.",                   en:"I didn't see that coming." },
-        { id:122,cat:'react', es:"Cálmate.",                             en:"Take it easy." },
-        { id:123,cat:'react', es:"¡Vamos!",                              en:"Let's go!" },
-        { id:124,cat:'react', es:"Eso es culpa mía.",                    en:"That's on me." },
-        { id:125,cat:'react', es:"Qué pena.",                            en:"What a shame." },
-        { id:126,cat:'react', es:"No está mal.",                         en:"Not bad." },
-        { id:127,cat:'react', es:"Menos mal.",                           en:"Thank goodness." },
-        { id:128,cat:'react', es:"Qué alivio.",                          en:"What a relief." },
-        { id:129,cat:'react', es:"¿Quién lo diría?",                     en:"Who would have thought?" },
-        { id:130,cat:'react', es:"Desde luego.",                         en:"Absolutely." },
-        { id:131,cat:'react', es:"Para nada.",                           en:"Not at all." },
-        { id:132,cat:'react', es:"Eso ya es otra cosa.",                 en:"Now that's different." },
-        { id:133,cat:'react', es:"Así que por eso.",                     en:"So that's why." },
-        { id:134,cat:'react', es:"No me digas.",                         en:"You don't say." },
-        { id:135,cat:'react', es:"A mí también me parece bien.",         en:"That works for me too." },
-
-        // ── SOCIAL ── alta frecuencia real en contexto social ─────────────────
-        { id:136,cat:'social', es:"¿Cómo te va?",                        en:"How's it going?" },
-        { id:137,cat:'social', es:"¿Qué hay de nuevo?",                  en:"What's new?" },
-        { id:138,cat:'social', es:"Ha sido un placer.",                   en:"It's been a pleasure." },
-        { id:139,cat:'social', es:"¿Puedo preguntarte algo?",             en:"Can I ask you something?" },
-        { id:140,cat:'social', es:"¿Has tenido noticias de él?",          en:"Have you heard from him?" },
-        { id:141,cat:'social', es:"Te lo agradezco mucho.",               en:"I really appreciate it." },
-        { id:142,cat:'social', es:"No te preocupes por eso.",             en:"Don't worry about it." },
-        { id:143,cat:'social', es:"¿Qué tal te fue?",                     en:"How did it go?" },
-        { id:144,cat:'social', es:"Cuéntame más.",                        en:"Tell me more." },
-        { id:145,cat:'social', es:"¿Qué opinas tú?",                      en:"What do you think?" },
-        { id:146,cat:'social', es:"¿Te apetece…?",                        en:"Do you feel like…?" },
-        { id:147,cat:'social', es:"Quedamos así entonces.",               en:"So we'll leave it at that." },
-        { id:148,cat:'social', es:"Cuando quieras.",                      en:"Whenever you're ready." },
-        { id:149,cat:'social', es:"Como quieras.",                        en:"Whatever you prefer." },
-        { id:150,cat:'social', es:"No quiero molestarte.",                en:"I don't want to bother you." },
-        { id:151,cat:'social', es:"¿Tienes tiempo esta semana?",          en:"Are you free this week?" },
-        { id:152,cat:'social', es:"Te lo juro.",                          en:"I swear." },
-        { id:153,cat:'social', es:"¿Me estás escuchando?",                en:"Are you listening to me?" },
-        { id:154,cat:'social', es:"Déjame que te explique.",              en:"Let me explain." },
-        { id:155,cat:'social', es:"No es lo que parece.",                 en:"It's not what it looks like." },
-        { id:156,cat:'social', es:"Seré breve.",                          en:"I'll keep it short." },
-        { id:157,cat:'social', es:"Básicamente…",                         en:"Basically…" },
-        { id:158,cat:'social', es:"La verdad es que…",                    en:"The truth is…" },
-        { id:159,cat:'social', es:"Que yo sepa…",                         en:"As far as I know…" },
-        { id:160,cat:'social', es:"Por lo que me contaron…",              en:"From what I was told…" },
+        // EXTRA core — frases de alta frecuencia adicionales
+        { id:101,cat:'core', es:"¿Tienes un momento?", en:"Do you have a minute?" },
+        { id:102,cat:'core', es:"Ya casi está.", en:"It's almost done." },
+        { id:103,cat:'core', es:"No es exactamente lo que buscaba.", en:"That's not exactly what I was looking for." },
+        { id:104,cat:'core', es:"Se me fue de la cabeza.", en:"It slipped my mind." },
+        { id:105,cat:'core', es:"Ya era hora.", en:"It's about time." },
+        { id:106,cat:'core', es:"¿Qué te parece si…?", en:"What if we…?" },
+        { id:107,cat:'core', es:"No sabía que eso era una opción.", en:"I didn't know that was an option." },
+        { id:108,cat:'core', es:"Vamos a ver.", en:"Let's see." },
+        { id:109,cat:'core', es:"Tiene todo el sentido.", en:"That makes total sense." },
+        { id:110,cat:'core', es:"Podría ser.", en:"Could be." },
+        { id:111,cat:'core', es:"Lo dudo.", en:"I doubt it." },
+        { id:112,cat:'core', es:"Hay que verlo para creerlo.", en:"You have to see it to believe it." },
+        { id:113,cat:'core', es:"¿Me estás tomando el pelo?", en:"Are you kidding me?" },
+        { id:114,cat:'core', es:"¿Qué se supone que significa eso?", en:"What's that supposed to mean?" },
+        { id:115,cat:'core', es:"No es culpa mía.", en:"It's not my fault." },
+        { id:116,cat:'core', es:"¿Qué está pasando?", en:"What's going on?" },
+        { id:117,cat:'core', es:"Déjame en paz.", en:"Leave me alone." },
+        { id:118,cat:'core', es:"No es momento para eso.", en:"This is not the time for that." },
+        { id:119,cat:'core', es:"Estoy tratando de concentrarme.", en:"I'm trying to focus." },
+        { id:120,cat:'core', es:"Cuanto antes, mejor.", en:"The sooner, the better." },
     ];
 
     const CAT_META = {
-        unlock: { label: '🔓 Desbloqueo', badgeClass: 'badge-unlock', color: '#fb923c' },
-        core:   { label: 'Core',          badgeClass: 'badge-core',   color: '#a89fff' },
-        bridge: { label: 'Puente',        badgeClass: 'badge-bridge', color: '#ff8fa3' },
-        react:  { label: 'Reacción',      badgeClass: 'badge-react',  color: '#ffc107' },
-        social: { label: 'Social',        badgeClass: 'badge-social', color: '#34d399' },
+        core:   { label: 'Core',    badgeClass: 'badge-core',   color: '#a89fff' },
+        bridge: { label: 'Puente',  badgeClass: 'badge-bridge', color: '#ff8fa3' },
+        energy: { label: 'Energía', badgeClass: 'badge-energy', color: '#ffc107' },
+        social: { label: 'Social',  badgeClass: 'badge-social', color: '#34d399' },
     };
 
-    // ─── STATE ───────────────────────────────────────────────────────────────────
+    // ─── STATE ───────────────────────────────────────────────────────────────
     let state = {
         panel: 'card',
         currentIndex: 0,
         showAnswer: false,
         isShuffled: false,
         order: rawData.map((_, i) => i),
-        mastered: new Set(JSON.parse(localStorage.getItem('mastered_v3') || '[]')),
+        mastered: new Set(JSON.parse(localStorage.getItem('mastered') || '[]')),
         sessionCount: 0,
         listFilter: 'all',
     };
 
-    // ─── PERSIST ─────────────────────────────────────────────────────────────────
+    // ─── PERSIST ─────────────────────────────────────────────────────────────
     function saveMastered() {
-        localStorage.setItem('mastered_v3', JSON.stringify([...state.mastered]));
+        localStorage.setItem('mastered', JSON.stringify([...state.mastered]));
     }
 
-    // ─── PANELS ──────────────────────────────────────────────────────────────────
+    // ─── PANELS ──────────────────────────────────────────────────────────────
     function showPanel(p) {
         state.panel = p;
         ['card','list','stats'].forEach(v => {
@@ -520,11 +489,12 @@
         if (p === 'list') renderList();
     }
 
-    // ─── CARD ─────────────────────────────────────────────────────────────────────
+    // ─── CARD ─────────────────────────────────────────────────────────────────
     function renderCard(dir) {
         const d = rawData[state.order[state.currentIndex]];
         const cardEl = document.getElementById('card-main');
 
+        // Animation
         if (dir) {
             const outClass = dir === 'next' ? 'anim-swipe-left' : 'anim-swipe-right';
             const inClass  = dir === 'next' ? 'anim-in-right'   : 'anim-in-left';
@@ -539,6 +509,7 @@
             _updateCardContent(d);
         }
 
+        // Prev/Next buttons
         document.getElementById('btn-prev').disabled = state.currentIndex === 0;
         document.getElementById('btn-next').disabled = state.currentIndex === state.order.length - 1;
     }
@@ -550,10 +521,11 @@
         document.getElementById('cat-label').textContent = meta.label;
         document.getElementById('cat-label').className = 'badge ' + meta.badgeClass;
 
-        const total = rawData.length;
+        const total = getFilteredOrder().length || rawData.length;
         document.getElementById('progress-text').textContent = `${state.currentIndex + 1} / ${total}`;
         document.getElementById('progress-bar').style.width = `${((state.currentIndex + 1) / total) * 100}%`;
 
+        // Mastered
         const isMastered = state.mastered.has(d.id);
         const cardEl = document.getElementById('card-main');
         cardEl.classList.toggle('mastered', isMastered);
@@ -621,9 +593,9 @@
             `${rawData.length} estructuras · ${state.mastered.size} dominadas`;
     }
 
-    // ─── SHUFFLE ─────────────────────────────────────────────────────────────────
+    // ─── SHUFFLE ──────────────────────────────────────────────────────────────
     function getFilteredOrder() {
-        return rawData.map((_, i) => i);
+        return rawData.map((_, i) => i); // base — could add filter here
     }
 
     function toggleShuffle() {
@@ -639,7 +611,7 @@
         renderCard();
     }
 
-    // ─── LIST ─────────────────────────────────────────────────────────────────────
+    // ─── LIST ─────────────────────────────────────────────────────────────────
     function setFilter(f, el) {
         state.listFilter = f;
         document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active-pill'));
@@ -670,10 +642,14 @@
                 </div>
             </div>`;
         }).join('');
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        
+        // Safety check para renderizar iconos en elementos generados dinámicamente
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
-    // ─── STATS ───────────────────────────────────────────────────────────────────
+    // ─── STATS ────────────────────────────────────────────────────────────────
     function renderStats() {
         const m = state.mastered.size;
         const total = rawData.length;
@@ -682,7 +658,8 @@
         document.getElementById('stat-pct').textContent = Math.round(m / total * 100) + '%';
         document.getElementById('stat-session').textContent = state.sessionCount;
 
-        const cats = ['unlock','core','bridge','react','social'];
+        // By category
+        const cats = ['core','bridge','energy','social'];
         document.getElementById('cat-breakdown').innerHTML = cats.map(c => {
             const items = rawData.filter(i => i.cat === c);
             const done  = items.filter(i => state.mastered.has(i.id)).length;
@@ -710,7 +687,7 @@
         renderCard();
     }
 
-    // ─── SPEECH ──────────────────────────────────────────────────────────────────
+    // ─── SPEECH ───────────────────────────────────────────────────────────────
     function speakText(t) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(t);
@@ -719,7 +696,7 @@
     }
     function speakCurrent() { speakText(rawData[state.order[state.currentIndex]].en); }
 
-    // ─── SWIPE ───────────────────────────────────────────────────────────────────
+    // ─── SWIPE ────────────────────────────────────────────────────────────────
     let touchStartX = 0, touchStartY = 0;
     document.getElementById('card-main').addEventListener('touchstart', e => {
         touchStartX = e.touches[0].clientX;
@@ -733,9 +710,12 @@
         }
     }, { passive: true });
 
-    // ─── INIT ────────────────────────────────────────────────────────────────────
+    // ─── INIT ─────────────────────────────────────────────────────────────────
     window.onload = () => {
-        if (typeof lucide !== 'undefined') lucide.createIcons();
+        // Safety check inicial
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
         showPanel('card');
         renderCard();
         renderList();
